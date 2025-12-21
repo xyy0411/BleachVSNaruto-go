@@ -8,4 +8,9 @@ const (
 	AnimRun
 	AnimJump
 	AnimAttack
+
+	// AnimJ1 普攻
+	AnimJ1
+	AnimJ2
+	AnimJ3
 )

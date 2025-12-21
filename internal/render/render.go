@@ -9,11 +9,24 @@ import (
 
 // AssetSet 保存游戏所需的贴图资源
 type AssetSet struct {
-	IdleFrames   []*ebiten.Image // 站立动画帧
-	RunFrames    []*ebiten.Image // 跑步动画帧
-	AttackFrames []*ebiten.Image // 攻击动画帧
-	JumpFrames   []*ebiten.Image // 跳跃动画帧
-	LandFrames   []*ebiten.Image // 落地动画帧
+	IdleFrames   []*ebiten.Image
+	RunFrames    []*ebiten.Image
+	AttackFrames AttackFrames
+	JumpFrames   []*ebiten.Image
+	LandFrames   []*ebiten.Image
+	DashFrames   []*ebiten.Image
+}
+
+type AttackFrames struct {
+	J JJ
+	U struct{}
+	I struct{}
+}
+
+type JJ struct {
+	J  [][]*ebiten.Image // J1 / J2 / J3
+	WJ []*ebiten.Image
+	SJ []*ebiten.Image
 }
 
 // Assets 全局唯一的资源容器
@@ -48,7 +61,33 @@ func LoadAssets() {
 	}
 
 	// 预留攻击动画资源，后续可按需补充
-	Assets.AttackFrames = []*ebiten.Image{}
+	Assets.AttackFrames.J.J = append(Assets.AttackFrames.J.J, []*ebiten.Image{
+		loadImage("assets/images/107.png"),
+		loadImage("assets/images/109.png"),
+		loadImage("assets/images/111.png"),
+		loadImage("assets/images/113.png"),
+		loadImage("assets/images/115.png"),
+	})
+
+	Assets.AttackFrames.J.J = append(Assets.AttackFrames.J.J, []*ebiten.Image{
+		loadImage("assets/images/117.png"),
+		loadImage("assets/images/119.png"),
+		loadImage("assets/images/121.png"),
+		loadImage("assets/images/123.png"),
+		loadImage("assets/images/125.png"),
+		loadImage("assets/images/127.png"),
+		loadImage("assets/images/129.png"),
+	})
+	Assets.AttackFrames.J.J = append(Assets.AttackFrames.J.J, []*ebiten.Image{
+		loadImage("assets/images/131.png"),
+		loadImage("assets/images/133.png"),
+		loadImage("assets/images/135.png"),
+		loadImage("assets/images/137.png"),
+		loadImage("assets/images/139.png"),
+		loadImage("assets/images/141.png"),
+		loadImage("assets/images/145.png"),
+		loadImage("assets/images/147.png"),
+	})
 }
 
 // loadImage 读取单张图片，失败时直接终止

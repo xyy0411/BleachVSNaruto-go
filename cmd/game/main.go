@@ -1,9 +1,8 @@
 package main
 
 import (
+	"github.com/xyy0411/ebiten_paractice/internal/app"
 	"log"
-
-	"ebiten_paractice/internal/app"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )

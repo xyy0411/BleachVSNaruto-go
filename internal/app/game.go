@@ -2,10 +2,10 @@ package app
 
 import (
 	"fmt"
+	"github.com/xyy0411/ebiten_paractice/internal/character"
+	"github.com/xyy0411/ebiten_paractice/internal/render"
+	"github.com/xyy0411/ebiten_paractice/internal/world"
 	"image/color"
-
-	"ebiten_paractice/internal/character"
-	"ebiten_paractice/internal/render"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -13,18 +13,21 @@ import (
 
 // Game 游戏主结构
 type Game struct {
-	player *character.Character // 玩家角色实例
+	player  *character.Character // 玩家角色实例
+	terrain *world.Terrain       // 地形实例
 }
 
 // New 创建并初始化游戏实例
 func New() *Game {
 	render.LoadAssets()
-	player := character.NewCharacter(200, characterGround())
-	return &Game{player: player}
+	terrain := world.NewTerrain()
+	player := character.NewCharacter(200, terrain.GroundY(0), terrain)
+	return &Game{player: player, terrain: terrain}
 }
 
 // Update 每帧更新逻辑
 func (g *Game) Update() error {
+	character.GlobalFrame++
 	g.player.Update()
 	return nil
 }
@@ -41,9 +44,4 @@ func (g *Game) Draw(screen *ebiten.Image) {
 // Layout 设置逻辑画布大小
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return 800, 600
-}
-
-// characterGround 提供角色初始落点
-func characterGround() float64 {
-	return GroundY
 }

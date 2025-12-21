@@ -1,11 +1,46 @@
 package character
 
 import (
-	"ebiten_paractice/internal/physics"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/xyy0411/ebiten_paractice/internal/physics"
 )
+
+func (c *Character) handleAttackInput() {
+	if !ebiten.IsKeyPressed(ebiten.KeyJ) {
+		return
+	}
+
+	if c.Action == ActionIdle || c.Action == ActionRun {
+		c.SwitchAction(ActionJ1)
+		return
+	}
+
+	def, ok := actionTable[c.Action]
+	if !ok || def.CancelStart < 0 {
+		return
+	}
+
+	// 是否在可取消帧
+	if c.ActionFrame >= def.CancelStart && c.ActionFrame <= def.CancelEnd {
+		c.SwitchAction(def.NextOnJ)
+	}
+
+	if c.ActionFrame >= def.TotalFrames {
+		c.SwitchAction(ActionIdle)
+	}
+}
+
+func (c *Character) updateActionEnd() {
+	def, ok := actionTable[c.Action]
+	if !ok {
+		return
+	}
+
+	if c.ActionFrame >= def.TotalFrames {
+		c.SwitchAction(ActionIdle)
+	}
+}
 
 func (c *Character) handleInput() {
 	if ebiten.IsKeyPressed(ebiten.KeyA) {
@@ -21,20 +56,6 @@ func (c *Character) handleInput() {
 		c.Vy = physics.JumpSpeed
 		c.OnGround = false
 		c.JumpCount++
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyJ) {
-		dir := getDirInput(c)
-		key := SkillKey{dir, AttackJ}
-		if skill, ok := c.Skills[key]; ok {
-			c.UseSkill(skill)
-		}
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyJ) && c.State != StateAttack {
-		c.State = StateAttack
-		c.Attacking = true
-		c.AttackTimer = 0
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyL) {

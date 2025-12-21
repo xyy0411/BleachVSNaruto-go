@@ -7,6 +7,7 @@ const (
 	StateIdle CharState = iota
 	StateRun
 	StateJump
+	State
 	StateAttack
 )
 

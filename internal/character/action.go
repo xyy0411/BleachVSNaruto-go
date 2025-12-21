@@ -8,6 +8,9 @@ const (
 	ActionRun
 	ActionJump
 	ActionBlink
+	ActionJ1
+	ActionJ2
+	ActionJ3
 	ActionAttackJ
 	ActionAttackADJ
 	ActionAttackSJ
@@ -19,11 +22,31 @@ const (
 
 // ActionDef 控制动作帧与取消窗口
 type ActionDef struct {
-	TotalFrames   int            // 总帧数
-	StartupEnd    int            // 起手帧结束位置
-	ActiveEnd     int            // 攻击判定结束位置
-	RecoveryEnd   int            // 硬直结束位置
+	TotalFrames   int64          // 总帧数
 	CancelWindows []CancelWindow // 允许取消的区间
+	CancelStart   int64
+	CancelEnd     int64
+	NextOnJ       Action
+}
+
+var actionTable = map[Action]ActionDef{
+	ActionJ1: {
+		TotalFrames: 24,
+		CancelStart: 8,
+		CancelEnd:   14,
+		NextOnJ:     ActionJ2,
+	},
+	ActionJ2: {
+		TotalFrames: 26,
+		CancelStart: 10,
+		CancelEnd:   16,
+		NextOnJ:     ActionJ3,
+	},
+	ActionJ3: {
+		TotalFrames: 30,
+		CancelStart: -1, // 不可取消
+		CancelEnd:   -1,
+	},
 }
 
 // CancelWindow 定义动作取消的可行区间
