@@ -1,12 +1,11 @@
-package game
+package app
 
 import (
 	"fmt"
 	"image/color"
 
-	"ebiten_paractice/internal/assets"
 	"ebiten_paractice/internal/character"
-	"ebiten_paractice/internal/world"
+	"ebiten_paractice/internal/render"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -19,7 +18,7 @@ type Game struct {
 
 // New 创建并初始化游戏实例
 func New() *Game {
-	assets.LoadAssets()
+	render.LoadAssets()
 	player := character.NewCharacter(200, characterGround())
 	return &Game{player: player}
 }
@@ -46,5 +45,5 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 // characterGround 提供角色初始落点
 func characterGround() float64 {
-	return world.GroundY
+	return GroundY
 }

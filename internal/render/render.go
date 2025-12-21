@@ -1,4 +1,4 @@
-package assets
+package render
 
 import (
 	"log"
@@ -22,29 +22,29 @@ var Assets AssetSet
 // LoadAssets 从本地文件加载图片资源
 func LoadAssets() {
 	Assets.IdleFrames = []*ebiten.Image{
-		loadImage("character/shapes/8.png"),
-		loadImage("character/shapes/10.png"),
-		loadImage("character/shapes/12.png"),
-		loadImage("character/shapes/14.png"),
+		loadImage("assets/images/8.png"),
+		loadImage("assets/images/10.png"),
+		loadImage("assets/images/12.png"),
+		loadImage("assets/images/14.png"),
 	}
 	Assets.RunFrames = []*ebiten.Image{
-		loadImage("character/shapes/17.png"),
-		loadImage("character/shapes/19.png"),
-		loadImage("character/shapes/21.png"),
-		loadImage("character/shapes/23.png"),
-		loadImage("character/shapes/25.png"),
-		loadImage("character/shapes/27.png"),
-		loadImage("character/shapes/29.png"),
+		loadImage("assets/images/17.png"),
+		loadImage("assets/images/19.png"),
+		loadImage("assets/images/21.png"),
+		loadImage("assets/images/23.png"),
+		loadImage("assets/images/25.png"),
+		loadImage("assets/images/27.png"),
+		loadImage("assets/images/29.png"),
 	}
 	Assets.JumpFrames = []*ebiten.Image{
-		loadImage("character/shapes/39.png"),
-		loadImage("character/shapes/41.png"),
-		loadImage("character/shapes/43.png"),
+		loadImage("assets/images/39.png"),
+		loadImage("assets/images/41.png"),
+		loadImage("assets/images/43.png"),
 	}
 	Assets.LandFrames = []*ebiten.Image{
-		loadImage("character/shapes/45.png"),
-		loadImage("character/shapes/47.png"),
-		loadImage("character/shapes/49.png"),
+		loadImage("assets/images/45.png"),
+		loadImage("assets/images/47.png"),
+		loadImage("assets/images/49.png"),
 	}
 
 	// 预留攻击动画资源，后续可按需补充
@@ -58,4 +58,18 @@ func loadImage(path string) *ebiten.Image {
 		log.Fatalf("加载图片失败: %s: %v", path, err)
 	}
 	return img
+}
+
+// DrawSprite 根据朝向绘制一帧
+func DrawSprite(screen *ebiten.Image, img *ebiten.Image, x, y float64, facing int) {
+	op := &ebiten.DrawImageOptions{}
+
+	if facing == -1 {
+		w := img.Bounds().Dx()
+		op.GeoM.Scale(-1, 1)
+		op.GeoM.Translate(float64(w), 0)
+	}
+
+	op.GeoM.Translate(x, y-float64(img.Bounds().Dy()))
+	screen.DrawImage(img, op)
 }

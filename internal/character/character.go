@@ -4,92 +4,13 @@ import (
 	"fmt"
 
 	"ebiten_paractice/internal/animation"
-	"ebiten_paractice/internal/assets"
-	"ebiten_paractice/internal/world"
+	"ebiten_paractice/internal/app"
+	"ebiten_paractice/internal/physics"
+	"ebiten_paractice/internal/render"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
-
-// Action 描述角色的动作定义
-type Action int
-
-const (
-	ActionIdle Action = iota
-	ActionRun
-	ActionJump
-	ActionBlink
-	ActionAttackJ
-	ActionAttackADJ
-	ActionAttackSJ
-	ActionAttackWJ
-	ActionAttackU
-	ActionAttackADU
-	ActionAttackWU
-)
-
-// ActionDef 控制动作帧与取消窗口
-type ActionDef struct {
-	TotalFrames   int            // 总帧数
-	StartupEnd    int            // 起手帧结束位置
-	ActiveEnd     int            // 攻击判定结束位置
-	RecoveryEnd   int            // 硬直结束位置
-	CancelWindows []CancelWindow // 允许取消的区间
-}
-
-// CancelWindow 定义动作取消的可行区间
-type CancelWindow struct {
-	Start int      // 取消窗口起始帧
-	End   int      // 取消窗口结束帧
-	To    []Action // 可取消到的动作列表
-}
-
-// CharState 角色状态枚举
-type CharState int
-
-const (
-	StateIdle CharState = iota
-	StateRun
-	StateJump
-	StateAttack
-)
-
-// DirInput 表示方向键输入
-type DirInput int
-
-const (
-	DirNone DirInput = iota
-	DirUp
-	DirDown
-	DirForward
-)
-
-// AttackKey 普通攻击按键
-type AttackKey int
-
-const (
-	AttackJ AttackKey = iota
-	AttackU
-	AttackI
-)
-
-const (
-	Gravity        = 0.6 // 重力加速度，每帧速度的变化量
-	JumpSpeed      = -12 // 跳跃初速度
-	AttackDuration = 20  // 攻击持续帧数
-)
-
-// SkillKey 用于匹配招式表
-type SkillKey struct {
-	Dir DirInput  // 方向输入
-	Key AttackKey // 具体按键
-}
-
-// Skill 预留的技能定义结构
-type Skill struct {
-	Frame int // 触发帧数
-}
 
 // Character 角色实体
 type Character struct {
@@ -123,10 +44,10 @@ type Character struct {
 func NewCharacter(x, y float64) *Character {
 	am := animation.NewManager()
 
-	am.Add(animation.AnimIdle, &animation.Animation{Frames: assets.Assets.IdleFrames, Speed: 10, Loop: true})
-	am.Add(animation.AnimAttack, &animation.Animation{Frames: assets.Assets.AttackFrames, Speed: 4, Loop: false})
-	am.Add(animation.AnimRun, &animation.Animation{Frames: assets.Assets.RunFrames, Speed: 6, Loop: true})
-	am.Add(animation.AnimJump, &animation.Animation{Frames: assets.Assets.JumpFrames, Speed: 7, Loop: false})
+	am.Add(animation.AnimIdle, &animation.Animation{Frames: render.Assets.IdleFrames, Speed: 10, Loop: true})
+	am.Add(animation.AnimAttack, &animation.Animation{Frames: render.Assets.AttackFrames, Speed: 4, Loop: false})
+	am.Add(animation.AnimRun, &animation.Animation{Frames: render.Assets.RunFrames, Speed: 6, Loop: true})
+	am.Add(animation.AnimJump, &animation.Animation{Frames: render.Assets.JumpFrames, Speed: 7, Loop: false})
 
 	am.Play(animation.AnimIdle)
 
@@ -152,8 +73,8 @@ func (c *Character) Update() {
 
 // Draw 绘制角色和环境调试信息
 func (c *Character) Draw(screen *ebiten.Image) {
-	world.DrawGroundLine(screen)
-	world.DrawPlatforms(screen)
+	app.DrawGroundLine(screen)
+	app.DrawPlatforms(screen)
 
 	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("X: %.2f  Vx: %.2f Y:%.2f Vy: %.2f  State: %d", c.X, c.Vx, c.Y, c.Vy, c.State), 400, 300)
 
@@ -162,42 +83,7 @@ func (c *Character) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	drawSprite(screen, frame, c.X, c.Y, c.Facing)
-}
-
-func (c *Character) handleInput() {
-	if ebiten.IsKeyPressed(ebiten.KeyA) {
-		c.Vx = -c.Speed
-		c.Facing = -1
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyD) {
-		c.Vx = c.Speed
-		c.Facing = 1
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyK) && c.JumpCount < 2 {
-		c.Vy = JumpSpeed
-		c.OnGround = false
-		c.JumpCount++
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyJ) {
-		dir := getDirInput(c)
-		key := SkillKey{dir, AttackJ}
-		if skill, ok := c.Skills[key]; ok {
-			c.UseSkill(skill)
-		}
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyJ) && c.State != StateAttack {
-		c.State = StateAttack
-		c.Attacking = true
-		c.AttackTimer = 0
-	}
-
-	if ebiten.IsKeyPressed(ebiten.KeyL) {
-		c.Vx += float64(c.Facing) * c.Speed * 4
-	}
+	render.DrawSprite(screen, frame, c.X, c.Y, c.Facing)
 }
 
 func (c *Character) updateState() {
@@ -236,20 +122,20 @@ func (c *Character) applyPhysics() {
 	prevY := c.Y
 
 	if !c.OnGround {
-		c.Vy += Gravity
+		c.Vy += physics.Gravity
 	}
 
 	c.X += c.Vx
 	c.Y += c.Vy
 	c.OnGround = false
 
-	if c.Y >= world.GroundY {
-		c.Y = world.GroundY
+	if c.Y >= app.GroundY {
+		c.Y = app.GroundY
 		c.Vy = 0
 		c.OnGround = true
 	}
 
-	for _, p := range world.Platforms {
+	for _, p := range app.Platforms {
 		if c.X >= p.X && c.X <= p.X+p.W {
 			if prevY <= p.Y && c.Y >= p.Y {
 				c.Y = p.Y
@@ -281,30 +167,3 @@ func (c *Character) updateAnimation() {
 
 // UseSkill 预留给技能系统的入口
 func (c *Character) UseSkill(_ Skill) {}
-
-func getDirInput(c *Character) DirInput {
-	if ebiten.IsKeyPressed(ebiten.KeyW) {
-		return DirUp
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyS) {
-		return DirDown
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyA) && c.Facing == -1 || ebiten.IsKeyPressed(ebiten.KeyD) && c.Facing == 1 {
-		return DirForward
-	}
-	return DirNone
-}
-
-// drawSprite 根据朝向绘制一帧
-func drawSprite(screen *ebiten.Image, img *ebiten.Image, x, y float64, facing int) {
-	op := &ebiten.DrawImageOptions{}
-
-	if facing == -1 {
-		w := img.Bounds().Dx()
-		op.GeoM.Scale(-1, 1)
-		op.GeoM.Translate(float64(w), 0)
-	}
-
-	op.GeoM.Translate(x, y-float64(img.Bounds().Dy()))
-	screen.DrawImage(img, op)
-}
