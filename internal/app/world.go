@@ -1,4 +1,4 @@
-package world
+package app
 
 import (
 	"image/color"
