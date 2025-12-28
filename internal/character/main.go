@@ -66,7 +66,6 @@ func (c *Character) Update() {
 
 // Draw 绘制角色和环境调试信息
 func (c *Character) Draw(screen *ebiten.Image) {
-	world.DrawGroundLine(screen)
 	world.DrawPlatforms(screen)
 
 	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("X: %.2f  Vx: %.2f Y:%.2f Vy: %.2f  State: %d Frame: %d", c.X, c.Vx, c.Y, c.Vy, c.State, c.ActionFrame), 400, 300)

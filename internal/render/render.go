@@ -15,6 +15,14 @@ type AssetSet struct {
 	JumpFrames   []*ebiten.Image
 	LandFrames   []*ebiten.Image
 	DashFrames   []*ebiten.Image
+
+	MapsAsset MapsAsset
+}
+
+type MapsAsset struct {
+	Background *ebiten.Image
+	Ground     *ebiten.Image
+	Decoration *ebiten.Image
 }
 
 type AttackFrames struct {
@@ -34,6 +42,12 @@ var Assets AssetSet
 
 // LoadAssets 从本地文件加载图片资源
 func LoadAssets() {
+	Assets.MapsAsset = MapsAsset{
+		Background: loadImage("assets/maps/zangetsu_haka/2.png"),
+		Ground:     loadImage("assets/maps/zangetsu_haka/5.png"),
+		Decoration: loadImage("assets/maps/zangetsu_haka/10.png"),
+	}
+
 	Assets.IdleFrames = []*ebiten.Image{
 		loadImage("assets/images/8.png"),
 		loadImage("assets/images/10.png"),

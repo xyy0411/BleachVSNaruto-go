@@ -7,5 +7,5 @@ import (
 
 type World struct {
 	Players []*character.Character
-	Terrain *world.Terrain
+	Map     *world.Terrain
 }

@@ -34,7 +34,6 @@ type Character struct {
 	ActionStartFrame int64  // 动作开始帧数
 
 	Env Environment // 环境信息
-
 }
 
 func (c *Character) basicOperations() {
@@ -57,8 +56,36 @@ func (c *Character) updateState() {
 	}
 }
 
+func (c *Character) applyActionDamping() {
+	def, ok := actionTable[c.Action]
+	if !ok {
+		return
+	}
+
+	switch def.Phase(c.ActionFrame) {
+	case PhaseStartup:
+		c.Vx *= def.DampingStartup
+	case PhaseActive:
+		c.Vx *= def.DampingActive
+	case PhaseRecovery:
+		c.Vx *= def.DampingRecovery
+	}
+}
+
+func (c *Character) CanHit() bool {
+	def, ok := actionTable[c.Action]
+	if !ok {
+		return false
+	}
+
+	return c.ActionFrame >= def.HitStart &&
+		c.ActionFrame <= def.HitEnd
+}
+
 func (c *Character) applyPhysics() {
 	// prevY := c.Y
+
+	c.applyActionDamping()
 
 	if c.Env == nil {
 		return
@@ -95,8 +122,6 @@ func (c *Character) updateAnimation() {
 		c.Anim.Play(animation.AnimRun)
 	case StateJump:
 		c.Anim.Play(animation.AnimJump)
-	case StateAttack:
-		c.Anim.Play(animation.AnimAttack)
 	}
 
 	if c.State == StateAttack && c.Anim.IsFinished() {

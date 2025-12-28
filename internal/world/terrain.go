@@ -2,16 +2,19 @@ package world
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/xyy0411/ebiten_paractice/internal/global"
+	"github.com/xyy0411/ebiten_paractice/internal/render"
 	"image/color"
 )
 
 type Terrain struct {
-	Ground    float64
+	// 地面宽度
+	Width float64
+	// 地图高度，角色的脚底会贴着这条线运动
+	Height float64
+	// 地面上可能存在的台阶
 	Platforms []Platform
 }
-
-// GroundY 地面高度，角色的脚底会贴着这条线运动
-const GroundY = 500
 
 // Platform 用于描述简单的矩形平台
 type Platform struct {
@@ -21,22 +24,36 @@ type Platform struct {
 	H float64 // 平台高度
 }
 
-// GroundY 实现接口
-func (t *Terrain) GroundY(x float64) float64 {
-	return GroundY
+func (t *Terrain) Draw(screen *ebiten.Image) {
+	decoration := render.Assets.MapsAsset.Decoration
+	ground := render.Assets.MapsAsset.Ground
+
+	decOP := &ebiten.DrawImageOptions{}
+	decOP.GeoM.Translate(0, float64(global.ScreenHeight-decoration.Bounds().Dy()))
+	screen.DrawImage(decoration, decOP)
+
+	groundOP := &ebiten.DrawImageOptions{}
+	groundOP.GeoM.Translate(0, float64(global.ScreenHeight-ground.Bounds().Dy()))
+	screen.DrawImage(ground, groundOP)
 }
 
-func NewTerrain() *Terrain {
+// GroundY 实现接口
+func (t *Terrain) GroundY(x float64) float64 {
+	return t.Height + 350
+}
+
+func NewTerrain(w, h float64) *Terrain {
 	return &Terrain{
-		Ground:    GroundY,
+		Width:     w,
+		Height:    h,
 		Platforms: Platforms,
 	}
 }
 
 func (t *Terrain) CheckPlatform(x, y, vy float64) (bool, float64) {
 	// 判断是否落在平台上
-	if y >= GroundY {
-		y = GroundY
+	if y >= t.GroundY(x) {
+		y = t.GroundY(x)
 		vy = 0
 		return true, y
 	}
