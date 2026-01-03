@@ -36,9 +36,10 @@ func main() {
 	physicsSys := &physics.System{
 		Controller: controllerSys,
 		World:      &w,
+		Time:       e.Time,
 		Gravity:    0.8,
 		MoveSpeed:  5,
-		JumpSpeed:  6,
+		JumpSpeed:  10,
 		DashSpeed:  10,
 	}
 
@@ -59,7 +60,7 @@ func main() {
 	g := game.Game{Engine: e}
 	ebiten.SetWindowSize(800, 600)
 	ebiten.SetWindowTitle("死神VS火影 demo")
-	ebiten.SetFPSMode(30)
+	ebiten.SetTPS(60)
 	global.Logger.Infoln("开始")
 	if err := ebiten.RunGame(&g); err != nil {
 		log.Fatal(err)

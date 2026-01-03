@@ -8,5 +8,6 @@ type Intent struct {
 	// 动作意图（瞬时/持续）
 	AttackPressed bool
 	JumpPressed   bool
+	DashPressed   bool
 	DashHeld      bool
 }

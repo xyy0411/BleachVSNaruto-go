@@ -28,7 +28,7 @@ func buildAnimations() animation.Set {
 			},
 			state.Dash: {
 				Frames: loadDashFrames(),
-				FPS:    10,
+				FPS:    5,
 				Loop:   false,
 			},
 		},
@@ -63,6 +63,13 @@ func loadJumpFrames() []*ebiten.Image {
 	return []*ebiten.Image{
 		assets.LoadImage(url + "0.png"),
 		assets.LoadImage(url + "1.png"),
+		assets.LoadImage(url + "2.png"),
+	}
+}
+
+func loadDoubleJumpFrames() []*ebiten.Image {
+	url := "assets/characters/rukia/jump/"
+	return []*ebiten.Image{
 		assets.LoadImage(url + "2.png"),
 	}
 }

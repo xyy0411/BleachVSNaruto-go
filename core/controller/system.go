@@ -14,6 +14,7 @@ type System struct {
 	// 用于检测 JustPressed
 	prevAttack bool
 	prevJump   bool
+	prevDash   bool
 }
 
 func (s *System) Name() string {
@@ -40,10 +41,12 @@ func (s *System) Update() {
 
 	intent.JumpPressed = in.Jump && !s.prevJump
 
+	intent.DashPressed = in.Dash && !s.prevDash
 	intent.DashHeld = in.Dash
 
 	s.Current = intent
 
 	s.prevJump = in.Jump
 	s.prevAttack = in.Attack
+	s.prevDash = in.Dash
 }

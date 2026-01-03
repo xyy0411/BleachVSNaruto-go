@@ -2,6 +2,7 @@ package physics
 
 import (
 	"github.com/xyy0411/bleachVSnaruto/core/controller"
+	gametime "github.com/xyy0411/bleachVSnaruto/core/time"
 	"github.com/xyy0411/bleachVSnaruto/core/world"
 	"github.com/xyy0411/bleachVSnaruto/models"
 )
@@ -9,6 +10,7 @@ import (
 type System struct {
 	Controller *controller.System
 	World      *world.World
+	Time       *gametime.Time
 
 	Bodies []*models.PhysicsBody
 
@@ -24,20 +26,44 @@ func (s *System) Name() string {
 
 func (s *System) Update() {
 	intent := s.Controller.Current
+	delta := s.Time.Delta
 
 	for _, body := range s.Bodies {
-		body.Dashing = false
+		if body.MaxJumps <= 0 {
+			body.MaxJumps = 1
+		}
 
-		if intent.DashHeld && intent.MoveX != 0 && body.OnGround {
+		// 更新冲刺计时，并在未结束前保持冲刺状态
+		if body.DashTimer > 0 {
+			body.DashTimer -= delta
+			if body.DashTimer <= 0 {
+				body.DashTimer = 0
+				body.Dashing = false
+			} else {
+				body.Dashing = true
+			}
+		} else {
+			body.Dashing = false
+		}
+
+		// 只有在冲刺结束后且重新按下冲刺键时才可重新冲刺
+		if !body.Dashing && intent.DashPressed && intent.MoveX != 0 && body.OnGround {
 			body.Dashing = true
-			body.VX = float64(intent.MoveX) * s.DashSpeed
+			body.DashTimer = body.DashDuration
+			body.DashDirection = intent.MoveX
+		}
+
+		if body.Dashing {
+			body.VX = (float64(body.DashDirection) * s.DashSpeed * s.MoveSpeed) / 3.0
 		} else {
 			body.VX = float64(intent.MoveX) * s.MoveSpeed
 		}
 
-		if intent.JumpPressed && body.OnGround {
+		canJump := intent.JumpPressed && (body.OnGround || body.JumpsUsed < body.MaxJumps)
+		if canJump {
 			body.VY = -s.JumpSpeed
 			body.OnGround = false
+			body.JumpsUsed++
 		}
 
 		if !body.OnGround {
@@ -51,6 +77,7 @@ func (s *System) Update() {
 
 		if body.OnGround {
 			body.VY = 0
+			body.JumpsUsed = 0
 		}
 	}
 }

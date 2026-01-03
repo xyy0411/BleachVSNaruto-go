@@ -14,19 +14,29 @@ type Rukia struct {
 
 	Runtime *charactor.Runtime
 	Data    *charactor.Data
+
+	doubleJumpAnim *models.ActionAnimation
 }
 
 func New() charactor.Character {
 	body := &models.PhysicsBody{
-		X:        100,
-		Y:        500,
-		OnGround: true,
+		X:            100,
+		Y:            500,
+		OnGround:     true,
+		DashDuration: 0.6,
+		MaxJumps:     2,
 	}
 
 	data := &charactor.Data{
 		MoveSpeed:  4,
 		JumpPower:  12,
 		Animations: buildAnimations(),
+	}
+
+	doubleJumpAnim := &models.ActionAnimation{
+		Frames: loadDoubleJumpFrames(),
+		FPS:    1,
+		Loop:   false,
 	}
 
 	player := animation.Player{}
@@ -38,10 +48,11 @@ func New() charactor.Character {
 	}
 
 	return &Rukia{
-		id:      "rukia",
-		name:    "朽木露琪亚",
-		Runtime: rt,
-		Data:    data,
+		id:             "rukia",
+		name:           "rukia",
+		Runtime:        rt,
+		Data:           data,
+		doubleJumpAnim: doubleJumpAnim,
 	}
 }
 
@@ -82,8 +93,12 @@ func (r Rukia) Update() {
 		r.Runtime.Facing = -1
 	}
 
-	if anim := r.Data.Animations.ByState[r.Runtime.State]; anim != nil {
-		r.Runtime.AnimPlayer.Play(anim)
+	if r.Runtime.State == state.Jump && body.JumpsUsed >= 2 && r.doubleJumpAnim != nil {
+		r.Runtime.AnimPlayer.Play(r.doubleJumpAnim)
+	} else {
+		if anim := r.Data.Animations.ByState[r.Runtime.State]; anim != nil {
+			r.Runtime.AnimPlayer.Play(anim)
+		}
 	}
 }
 
