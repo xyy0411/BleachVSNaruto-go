@@ -1,9 +1,9 @@
 package physics
 
 import (
-	"github.com/xyy0411/ebiten_paractice/core/controller"
-	"github.com/xyy0411/ebiten_paractice/core/world"
-	"github.com/xyy0411/ebiten_paractice/models"
+	"github.com/xyy0411/bleachVSnaruto/core/controller"
+	"github.com/xyy0411/bleachVSnaruto/core/world"
+	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
 type System struct {
@@ -15,6 +15,7 @@ type System struct {
 	Gravity   float64
 	MoveSpeed float64
 	JumpSpeed float64
+	DashSpeed float64
 }
 
 func (s *System) Name() string {
@@ -25,7 +26,14 @@ func (s *System) Update() {
 	intent := s.Controller.Current
 
 	for _, body := range s.Bodies {
-		body.VX = float64(intent.MoveX) * s.MoveSpeed
+		body.Dashing = false
+
+		if intent.DashHeld && intent.MoveX != 0 && body.OnGround {
+			body.Dashing = true
+			body.VX = float64(intent.MoveX) * s.DashSpeed
+		} else {
+			body.VX = float64(intent.MoveX) * s.MoveSpeed
+		}
 
 		if intent.JumpPressed && body.OnGround {
 			body.VY = -s.JumpSpeed

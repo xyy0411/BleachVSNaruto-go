@@ -1,6 +1,6 @@
 package animation
 
-import "github.com/xyy0411/ebiten_paractice/core/animatable"
+import "github.com/xyy0411/bleachVSnaruto/core/animatable"
 
 type System struct{}
 

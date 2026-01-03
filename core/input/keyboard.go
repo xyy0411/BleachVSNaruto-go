@@ -2,7 +2,7 @@ package input
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/xyy0411/ebiten_paractice/models"
+	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
 type KeyboardSource struct{}

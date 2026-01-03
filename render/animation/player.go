@@ -2,7 +2,8 @@ package animation
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/xyy0411/ebiten_paractice/models"
+	"github.com/xyy0411/bleachVSnaruto/models"
+	"math"
 )
 
 // Player 动画播放器，用于控制和管理动画的播放状态
@@ -30,25 +31,33 @@ func (p *Player) Play(anim *models.ActionAnimation) {
 // Update 方法用于更新玩家的动画状态
 // 参数 delta 表示自上一帧以来经过的时间（秒）
 func (p *Player) Update(delta float64) {
-	// 检查当前动画是否存在或FPS是否有效
 	if p.Current == nil || p.Current.FPS <= 0 {
 		return
 	}
+	if delta <= 0 || math.IsNaN(delta) || math.IsInf(delta, 0) {
+		return
+	}
 
-	// 计算每帧应该持续的时间（秒）
-	frameTime := float64(1.0 / p.Current.FPS)
+	frameTime := 1.0 / float64(p.Current.FPS)
+	if frameTime <= 0 || math.IsNaN(frameTime) || math.IsInf(frameTime, 0) {
+		return
+	}
+
 	p.Timer += delta
 
-	// 当累计时间超过单帧时间时，更新动画帧
-	for p.Timer >= frameTime {
-		// 减去已消耗的帧时间
-		p.Timer -= frameTime
-		// 切换到下一帧
-		p.Frame++
+	// 计算本帧需要推进的帧数，并做一个上限，防止极端值导致长循环
+	steps := int(math.Floor(p.Timer / frameTime))
+	const maxAdvance = 16 // 随意安全上限
+	if steps > maxAdvance {
+		steps = maxAdvance
+		p.Timer = 0 // 异常情况下清空累积时间
+	} else {
+		p.Timer -= float64(steps) * frameTime
+	}
 
-		// 检查是否到达动画末尾
+	for i := 0; i < steps; i++ {
+		p.Frame++
 		if p.Frame >= int64(len(p.Current.Frames)) {
-			// 根据Loop属性决定是否循环播放
 			if p.Current.Loop {
 				p.Frame = 0
 			} else {

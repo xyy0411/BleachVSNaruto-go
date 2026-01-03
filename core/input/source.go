@@ -1,6 +1,6 @@
 package input
 
-import "github.com/xyy0411/ebiten_paractice/models"
+import "github.com/xyy0411/bleachVSnaruto/models"
 
 // Source 定义了输入源的接口
 // 用于从不同来源读取输入帧数据

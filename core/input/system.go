@@ -1,8 +1,8 @@
 package input
 
 import (
-	"github.com/xyy0411/ebiten_paractice/core/time"
-	"github.com/xyy0411/ebiten_paractice/models"
+	"github.com/xyy0411/bleachVSnaruto/core/time"
+	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
 // System 输入系统，用于管理游戏输入相关的状态和数据

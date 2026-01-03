@@ -1,4 +1,4 @@
-module github.com/xyy0411/ebiten_paractice
+module github.com/xyy0411/bleachVSnaruto
 
 go 1.25.1
 

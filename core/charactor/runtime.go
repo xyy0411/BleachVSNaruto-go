@@ -1,10 +1,10 @@
 package charactor
 
 import (
-	"github.com/xyy0411/ebiten_paractice/common/state"
-	"github.com/xyy0411/ebiten_paractice/core/animatable"
-	"github.com/xyy0411/ebiten_paractice/models"
-	"github.com/xyy0411/ebiten_paractice/render/animation"
+	"github.com/xyy0411/bleachVSnaruto/common/state"
+	"github.com/xyy0411/bleachVSnaruto/core/animatable"
+	"github.com/xyy0411/bleachVSnaruto/models"
+	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
 
 type Runtime struct {

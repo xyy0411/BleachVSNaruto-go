@@ -2,14 +2,14 @@ package engine
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/xyy0411/ebiten_paractice/core/animatable"
-	"github.com/xyy0411/ebiten_paractice/core/charactor"
-	"github.com/xyy0411/ebiten_paractice/core/input"
-	"github.com/xyy0411/ebiten_paractice/core/physics"
-	"github.com/xyy0411/ebiten_paractice/core/time"
-	"github.com/xyy0411/ebiten_paractice/global"
-	"github.com/xyy0411/ebiten_paractice/render/animation"
-	"github.com/xyy0411/ebiten_paractice/render/draw"
+	"github.com/xyy0411/bleachVSnaruto/core/animatable"
+	"github.com/xyy0411/bleachVSnaruto/core/charactor"
+	"github.com/xyy0411/bleachVSnaruto/core/input"
+	"github.com/xyy0411/bleachVSnaruto/core/physics"
+	"github.com/xyy0411/bleachVSnaruto/core/time"
+	"github.com/xyy0411/bleachVSnaruto/global"
+	"github.com/xyy0411/bleachVSnaruto/render/animation"
+	"github.com/xyy0411/bleachVSnaruto/render/draw"
 )
 
 type System interface {
@@ -31,7 +31,8 @@ func New() *Engine {
 		Time: &time.Time{
 			TPS: 30,
 		},
-		InputSystem: &input.System{},
+		InputSystem:     &input.System{},
+		AnimationSystem: &animation.System{},
 	}
 }
 
@@ -79,7 +80,7 @@ func (e *Engine) Draw(screen *ebiten.Image) {
 			op.GeoM.Translate(float64(frame.Bounds().Dx()), 0)
 		}
 
-		op.GeoM.Translate(rt.Body.X, rt.Body.Y)
+		op.GeoM.Translate(rt.Body.X, rt.Body.Y-float64(frame.Bounds().Dy()))
 		screen.DrawImage(frame, op)
 	}
 }

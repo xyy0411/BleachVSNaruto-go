@@ -1,9 +1,9 @@
 package animation
 
 import (
-	"github.com/xyy0411/ebiten_paractice/common/state"
-	"github.com/xyy0411/ebiten_paractice/core/action"
-	"github.com/xyy0411/ebiten_paractice/models"
+	"github.com/xyy0411/bleachVSnaruto/common/state"
+	"github.com/xyy0411/bleachVSnaruto/core/action"
+	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
 // Set 动画集合，存储不同动作对应的动画

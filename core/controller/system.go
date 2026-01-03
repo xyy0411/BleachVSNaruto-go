@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/xyy0411/ebiten_paractice/core/input"
-	"github.com/xyy0411/ebiten_paractice/models"
+	"github.com/xyy0411/bleachVSnaruto/core/input"
+	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
 type System struct {
@@ -26,9 +26,9 @@ func (s *System) Update() {
 	var intent models.Intent
 
 	if in.Left {
-		intent.MoveX = 1
-	} else if in.Right {
 		intent.MoveX = -1
+	} else if in.Right {
+		intent.MoveX = 1
 	}
 
 	if in.Up {

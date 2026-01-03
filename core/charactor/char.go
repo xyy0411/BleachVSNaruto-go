@@ -1,8 +1,8 @@
 package charactor
 
 import (
-	"github.com/xyy0411/ebiten_paractice/core/action"
-	"github.com/xyy0411/ebiten_paractice/render/animation"
+	"github.com/xyy0411/bleachVSnaruto/core/action"
+	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
 
 type Character interface {

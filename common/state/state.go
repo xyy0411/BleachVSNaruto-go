@@ -3,7 +3,8 @@ package state
 type State int
 
 const (
-	StateIdle State = iota
-	StateRun
-	StateJump
+	Idle State = iota
+	Run
+	Jump
+	Dash
 )

@@ -2,7 +2,7 @@ package game
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/xyy0411/ebiten_paractice/engine"
+	"github.com/xyy0411/bleachVSnaruto/engine"
 	"image/color"
 )
 
@@ -21,5 +21,5 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 800, 600
+	return 800, 600 // 返回固定的窗口尺寸 800x600
 }

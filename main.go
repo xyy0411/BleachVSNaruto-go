@@ -1,17 +1,18 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/xyy0411/ebiten_paractice/characters/rukia"
-	"github.com/xyy0411/ebiten_paractice/config"
-	"github.com/xyy0411/ebiten_paractice/core/controller"
-	"github.com/xyy0411/ebiten_paractice/core/input"
-	"github.com/xyy0411/ebiten_paractice/core/physics"
-	"github.com/xyy0411/ebiten_paractice/core/world"
-	"github.com/xyy0411/ebiten_paractice/engine"
-	"github.com/xyy0411/ebiten_paractice/game"
-	"github.com/xyy0411/ebiten_paractice/models"
+	"github.com/xyy0411/bleachVSnaruto/characters/rukia"
+	"github.com/xyy0411/bleachVSnaruto/config"
+	"github.com/xyy0411/bleachVSnaruto/core/controller"
+	"github.com/xyy0411/bleachVSnaruto/core/input"
+	"github.com/xyy0411/bleachVSnaruto/core/physics"
+	"github.com/xyy0411/bleachVSnaruto/core/world"
+	"github.com/xyy0411/bleachVSnaruto/engine"
+	"github.com/xyy0411/bleachVSnaruto/game"
+	"github.com/xyy0411/bleachVSnaruto/global"
 	"log"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func main() {
@@ -36,27 +37,30 @@ func main() {
 		Controller: controllerSys,
 		World:      &w,
 		Gravity:    0.8,
-		MoveSpeed:  4,
-		JumpSpeed:  12,
+		MoveSpeed:  5,
+		JumpSpeed:  6,
+		DashSpeed:  10,
 	}
 
-	playerBody := &models.PhysicsBody{
-		X:        100,
-		Y:        w.GroundY,
-		OnGround: true,
-	}
-
-	physicsSys.Bodies = append(physicsSys.Bodies, playerBody)
-
+	e.InputSystem = inputSys
 	e.PhysicsSystem = physicsSys
 	e.RegisterSystem(controllerSys)
 	e.RegisterSystem(physicsSys)
 
-	e.RegisterActor(rukia.New())
+	player := rukia.New()
+	rt := player.GetRuntime()
+	rt.Body.Y = w.GroundY
+	rt.Body.OnGround = true
+
+	physicsSys.Bodies = append(physicsSys.Bodies, rt.Body)
+
+	e.RegisterActor(player)
 
 	g := game.Game{Engine: e}
 	ebiten.SetWindowSize(800, 600)
 	ebiten.SetWindowTitle("死神VS火影 demo")
+	ebiten.SetFPSMode(30)
+	global.Logger.Infoln("开始")
 	if err := ebiten.RunGame(&g); err != nil {
 		log.Fatal(err)
 	}

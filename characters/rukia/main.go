@@ -1,11 +1,11 @@
 package rukia
 
 import (
-	"github.com/xyy0411/ebiten_paractice/common/state"
-	"github.com/xyy0411/ebiten_paractice/core/action"
-	"github.com/xyy0411/ebiten_paractice/core/charactor"
-	"github.com/xyy0411/ebiten_paractice/models"
-	"github.com/xyy0411/ebiten_paractice/render/animation"
+	"github.com/xyy0411/bleachVSnaruto/common/state"
+	"github.com/xyy0411/bleachVSnaruto/core/action"
+	"github.com/xyy0411/bleachVSnaruto/core/charactor"
+	"github.com/xyy0411/bleachVSnaruto/models"
+	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
 
 type Rukia struct {
@@ -64,14 +64,16 @@ func (r Rukia) GetName() string {
 func (r Rukia) Update() {
 	body := r.Runtime.Body
 
-	if body.OnGround {
+	if body.Dashing {
+		r.Runtime.State = state.Dash
+	} else if body.OnGround {
 		if body.VX != 0 {
-			r.Runtime.State = state.StateRun
+			r.Runtime.State = state.Run
 		} else {
-			r.Runtime.State = state.StateIdle
+			r.Runtime.State = state.Idle
 		}
 	} else {
-		r.Runtime.State = state.StateJump
+		r.Runtime.State = state.Jump
 	}
 
 	if body.VX > 0 {
@@ -79,9 +81,12 @@ func (r Rukia) Update() {
 	} else if body.VX < 0 {
 		r.Runtime.Facing = -1
 	}
+
+	if anim := r.Data.Animations.ByState[r.Runtime.State]; anim != nil {
+		r.Runtime.AnimPlayer.Play(anim)
+	}
 }
 
 func (r Rukia) GetAction() *action.Runtime {
-	//TODO implement me
-	panic("implement me")
+	return &action.Runtime{}
 }

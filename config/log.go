@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/xyy0411/ebiten_paractice/global"
+	"github.com/xyy0411/bleachVSnaruto/global"
 	"os"
 	"path"
 )
