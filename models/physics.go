@@ -17,4 +17,5 @@ type PhysicsBody struct {
 	// 跳跃参数
 	MaxJumps  int // 最大可连续跳跃次数（含地面起跳）
 	JumpsUsed int // 已使用的跳跃次数
+
 }

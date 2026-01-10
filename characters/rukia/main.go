@@ -14,8 +14,6 @@ type Rukia struct {
 
 	Runtime *charactor.Runtime
 	Data    *charactor.Data
-
-	doubleJumpAnim *models.ActionAnimation
 }
 
 func New() charactor.Character {
@@ -33,26 +31,21 @@ func New() charactor.Character {
 		Animations: buildAnimations(),
 	}
 
-	doubleJumpAnim := &models.ActionAnimation{
-		Frames: loadDoubleJumpFrames(),
-		FPS:    1,
-		Loop:   false,
-	}
-
 	player := animation.Player{}
 
 	rt := &charactor.Runtime{
-		Body:       body,
-		Facing:     1,
-		AnimPlayer: player,
+		Body:         body,
+		Facing:       1,
+		PrevOnGround: body.OnGround,
+		PrevVY:       body.VY,
+		AnimPlayer:   player,
 	}
 
 	return &Rukia{
-		id:             "rukia",
-		name:           "rukia",
-		Runtime:        rt,
-		Data:           data,
-		doubleJumpAnim: doubleJumpAnim,
+		id:      "rukia",
+		name:    "rukia",
+		Runtime: rt,
+		Data:    data,
 	}
 }
 
@@ -74,16 +67,45 @@ func (r Rukia) GetName() string {
 
 func (r Rukia) Update() {
 	body := r.Runtime.Body
+	events := charactor.Events{}
+	if !r.Runtime.PrevOnGround && body.OnGround && r.Runtime.PrevVY > 0 {
+		events.JustLanded = true
+	}
+	if r.Runtime.PrevOnGround && !body.OnGround && body.VY < 0 {
+		events.JumpStart = true
+	}
+	r.Runtime.Events = events
 
-	if body.Dashing {
+	jumpStartAnim := r.Data.Animations.ByState[state.JumpStart]
+	justLandedAnim := r.Data.Animations.ByState[state.JustLanded]
+
+	jumpStartLocked := jumpStartAnim != nil &&
+		!jumpStartAnim.Loop &&
+		r.Runtime.AnimPlayer.Current == jumpStartAnim &&
+		r.Runtime.AnimPlayer.Frame < int64(len(jumpStartAnim.Frames)-1)
+	justLandedLocked := justLandedAnim != nil &&
+		!justLandedAnim.Loop &&
+		r.Runtime.AnimPlayer.Current == justLandedAnim &&
+		r.Runtime.AnimPlayer.Frame < int64(len(justLandedAnim.Frames)-1)
+
+	switch {
+	case justLandedLocked:
+		r.Runtime.State = state.JustLanded
+	case jumpStartLocked:
+		r.Runtime.State = state.JumpStart
+	case events.JustLanded:
+		r.Runtime.State = state.JustLanded
+	case events.JumpStart:
+		r.Runtime.State = state.JumpStart
+	case body.Dashing:
 		r.Runtime.State = state.Dash
-	} else if body.OnGround {
+	case body.OnGround:
 		if body.VX != 0 {
 			r.Runtime.State = state.Run
 		} else {
 			r.Runtime.State = state.Idle
 		}
-	} else {
+	default:
 		r.Runtime.State = state.Jump
 	}
 
@@ -93,13 +115,11 @@ func (r Rukia) Update() {
 		r.Runtime.Facing = -1
 	}
 
-	if r.Runtime.State == state.Jump && body.JumpsUsed >= 2 && r.doubleJumpAnim != nil {
-		r.Runtime.AnimPlayer.Play(r.doubleJumpAnim)
-	} else {
-		if anim := r.Data.Animations.ByState[r.Runtime.State]; anim != nil {
-			r.Runtime.AnimPlayer.Play(anim)
-		}
-	}
+	anim := r.Data.Animations.ByState[r.Runtime.State]
+	r.Runtime.AnimPlayer.Play(anim)
+
+	r.Runtime.PrevOnGround = body.OnGround
+	r.Runtime.PrevVY = body.VY
 }
 
 func (r Rukia) GetAction() *action.Runtime {

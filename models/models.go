@@ -7,6 +7,7 @@ type CharacterStats struct {
 	Weight  float64
 }
 
+// InputFrame 是本帧发生的事件
 type InputFrame struct {
 	Frame int64
 

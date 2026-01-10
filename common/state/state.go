@@ -5,6 +5,8 @@ type State int
 const (
 	Idle State = iota
 	Run
-	Jump
+	JumpStart
+	Jump // 空中
+	JustLanded
 	Dash
 )
