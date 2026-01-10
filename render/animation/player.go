@@ -50,7 +50,7 @@ func (p *Player) Update(delta float64) {
 	const maxAdvance = 16 // 随意安全上限
 	if steps > maxAdvance {
 		steps = maxAdvance
-		p.Timer = 0 // 异常情况下清空累积时间
+		p.Timer = 0 // 异常情况清空累积时间
 	} else {
 		p.Timer -= float64(steps) * frameTime
 	}

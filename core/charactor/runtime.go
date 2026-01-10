@@ -12,11 +12,19 @@ type Runtime struct {
 
 	State state.State
 	// 朝左 1 朝右 -1
-	Facing int
+	Facing       int
+	PrevOnGround bool
+	PrevVY       float64
+	Events       Events
 
 	AnimPlayer animation.Player
 }
 
 func (r *Runtime) AnimationPlayer() animatable.AnimationPlayer {
 	return &r.AnimPlayer
+}
+
+type Events struct {
+	JumpStart  bool
+	JustLanded bool
 }

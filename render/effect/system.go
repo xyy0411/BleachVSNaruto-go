@@ -1,6 +1,6 @@
 package effect
 
-import "github.com/xyy0411/ebiten_paractice/core/action"
+import "github.com/xyy0411/bleachVSnaruto/core/action"
 
 // Set 特效集合，用于管理不同时机触发的特效
 type Set struct {
