@@ -30,17 +30,20 @@ func (s *System) Update() {
 	in := s.Input.Current
 	var intent models.Intent
 
-	if in.Left {
+	switch {
+	case in.Left:
 		intent.MoveX = -1
-	} else if in.Right {
+	case in.Right:
 		intent.MoveX = 1
 	}
 
-	if in.Up {
+	switch {
+	case in.Up:
 		intent.MoveY = 1
-	} else if in.Down {
+	case in.Down:
 		intent.MoveY = -1
 	}
+
 	intent.AttackPressed = in.Attack && !s.prevAttack
 	intent.JumpPressed = in.Jump && !s.prevJump
 	intent.DashPressed = in.Dash && !s.prevDash

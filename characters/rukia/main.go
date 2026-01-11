@@ -109,14 +109,15 @@ func (r Rukia) Update() {
 		r.Runtime.State = state.Jump
 	}
 
-	if body.VX > 0 {
-		r.Runtime.Facing = 1
-	} else if body.VX < 0 {
-		r.Runtime.Facing = -1
+	if body.OnGround {
+		if body.VX > 0 {
+			r.Runtime.Facing = 1
+		} else if body.VX < 0 {
+			r.Runtime.Facing = -1
+		}
 	}
 
-	anim := r.Data.Animations.ByState[r.Runtime.State]
-	r.Runtime.AnimPlayer.Play(anim)
+	r.Runtime.AnimPlayer.Play(r.Data.Animations.ByState[r.Runtime.State])
 
 	r.Runtime.PrevOnGround = body.OnGround
 	r.Runtime.PrevVY = body.VY
