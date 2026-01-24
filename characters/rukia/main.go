@@ -3,6 +3,7 @@ package rukia
 import (
 	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/core/action"
+	"github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/charactor"
 	"github.com/xyy0411/bleachVSnaruto/models"
 	"github.com/xyy0411/bleachVSnaruto/render/animation"
@@ -29,16 +30,18 @@ func New() charactor.Character {
 		MoveSpeed:  4,
 		JumpPower:  12,
 		Animations: buildAnimations(),
+		Audio:      charactor.DefaultAudioConfig(),
 	}
 
 	player := animation.Player{}
 
 	rt := &charactor.Runtime{
-		Body:         body,
-		Facing:       1,
-		PrevOnGround: body.OnGround,
-		PrevVY:       body.VY,
-		AnimPlayer:   player,
+		Body:          body,
+		Facing:        1,
+		PrevOnGround:  body.OnGround,
+		PrevVY:        body.VY,
+		PrevJumpsUsed: body.JumpsUsed,
+		AnimPlayer:    player,
 	}
 
 	return &Rukia{
@@ -71,10 +74,15 @@ func (r Rukia) Update() {
 	if !r.Runtime.PrevOnGround && body.OnGround && r.Runtime.PrevVY > 0 {
 		events.JustLanded = true
 	}
-	if r.Runtime.PrevOnGround && !body.OnGround && body.VY < 0 {
+	if body.JumpsUsed > r.Runtime.PrevJumpsUsed && body.VY < 0 {
 		events.JumpStart = true
 	}
 	r.Runtime.Events = events
+	if events.JumpStart {
+		if path := r.Data.Audio.SFX[audio.EventJump]; path != "" && audio.Default != nil {
+			audio.Default.Play(path, r.Data.Audio.Volume)
+		}
+	}
 
 	jumpStartAnim := r.Data.Animations.ByState[state.JumpStart]
 	justLandedAnim := r.Data.Animations.ByState[state.JustLanded]
@@ -121,6 +129,7 @@ func (r Rukia) Update() {
 
 	r.Runtime.PrevOnGround = body.OnGround
 	r.Runtime.PrevVY = body.VY
+	r.Runtime.PrevJumpsUsed = body.JumpsUsed
 }
 
 func (r Rukia) GetAction() *action.Runtime {

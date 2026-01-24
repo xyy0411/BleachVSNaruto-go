@@ -12,10 +12,11 @@ type Runtime struct {
 
 	State state.State
 	// 朝左 1 朝右 -1
-	Facing       int
-	PrevOnGround bool
-	PrevVY       float64
-	Events       Events
+	Facing        int
+	PrevOnGround  bool
+	PrevVY        float64
+	PrevJumpsUsed int
+	Events        Events
 
 	AnimPlayer animation.Player
 }
