@@ -46,7 +46,7 @@ func buildAnimations() animation.Set {
 }
 
 func loadIdleFrames() []*ebiten.Image {
-	url := "assets/characters/rukia/idle/"
+	url := "assets/characters/rukia/animation/idle/"
 	return []*ebiten.Image{
 		assets.LoadImage(url + "0.png"),
 		assets.LoadImage(url + "1.png"),
@@ -56,7 +56,7 @@ func loadIdleFrames() []*ebiten.Image {
 }
 
 func loadRunFrames() []*ebiten.Image {
-	url := "assets/characters/rukia/run/"
+	url := "assets/characters/rukia/animation/run/"
 	return []*ebiten.Image{
 		assets.LoadImage(url + "0.png"),
 		assets.LoadImage(url + "1.png"),
@@ -69,14 +69,14 @@ func loadRunFrames() []*ebiten.Image {
 }
 
 func loadJumpFrames() []*ebiten.Image {
-	url := "assets/characters/rukia/jump/"
+	url := "assets/characters/rukia/animation/jump/"
 	return []*ebiten.Image{
 		assets.LoadImage(url + "0.png"),
 	}
 }
 
 func loadJustLandedFrames() []*ebiten.Image {
-	url := "assets/characters/rukia/just_landed/"
+	url := "assets/characters/rukia/animation/just_landed/"
 	return []*ebiten.Image{
 		assets.LoadImage(url + "0.png"),
 		assets.LoadImage(url + "1.png"),
@@ -86,14 +86,14 @@ func loadJustLandedFrames() []*ebiten.Image {
 }
 
 func loadJumpStartFrames() []*ebiten.Image {
-	url := "assets/characters/rukia/jump_start/"
+	url := "assets/characters/rukia/animation/jump_start/"
 	return []*ebiten.Image{
 		assets.LoadImage(url + "0.png"),
 	}
 }
 
 func loadDashFrames() []*ebiten.Image {
-	url := "assets/characters/rukia/dash/"
+	url := "assets/characters/rukia/animation/dash/"
 	return []*ebiten.Image{
 		assets.LoadImage(url + "0.png"),
 		assets.LoadImage(url + "1.png"),

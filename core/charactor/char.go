@@ -18,4 +18,10 @@ type Data struct {
 	MoveSpeed  float64
 	JumpPower  float64
 	Animations animation.Set
+	Audio      AudioConfig
+}
+
+type AudioConfig struct {
+	SFX    map[string]string // 事件名 -> 音频路径
+	Volume float64
 }

@@ -4,10 +4,7 @@ package action
 type Action int
 
 const (
-	ActionIdle Action = iota
-	ActionRun
-	ActionJump
-	ActionBlink
+	ActionBlink Action = iota
 	ActionAttackJ
 	ActionAttackADJ
 	ActionAttackSJ

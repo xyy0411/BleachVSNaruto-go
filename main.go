@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/xyy0411/bleachVSnaruto/characters/rukia"
 	"github.com/xyy0411/bleachVSnaruto/config"
+	coreaudio "github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/controller"
 	"github.com/xyy0411/bleachVSnaruto/core/input"
 	"github.com/xyy0411/bleachVSnaruto/core/physics"
@@ -13,12 +14,15 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
 func main() {
 	config.InitLog()
 
 	e := engine.New()
+	audioCtx := audio.NewContext(11000)
+	coreaudio.Init(audioCtx)
 
 	inputSys := &input.System{
 		Time:   e.Time,

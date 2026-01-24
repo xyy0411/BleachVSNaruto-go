@@ -47,10 +47,18 @@ func (s *System) Update() {
 		}
 
 		// 只有在冲刺结束后且重新按下冲刺键时才可重新冲刺
-		if !body.Dashing && intent.DashPressed && intent.MoveX != 0 && body.OnGround {
+		if intent.MoveX != 0 {
+			body.DashDirection = intent.MoveX
+		} else if body.DashDirection == 0 {
+			body.DashDirection = 1
+		}
+
+		if !body.Dashing && intent.DashPressed && body.OnGround {
 			body.Dashing = true
 			body.DashTimer = body.DashDuration
-			body.DashDirection = intent.MoveX
+			if intent.MoveX != 0 {
+				body.DashDirection = intent.MoveX
+			}
 		}
 
 		if body.Dashing {
