@@ -7,9 +7,9 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/core/input"
 	"github.com/xyy0411/bleachVSnaruto/core/physics"
 	"github.com/xyy0411/bleachVSnaruto/core/time"
+	"github.com/xyy0411/bleachVSnaruto/game_map/zangetsu"
 	"github.com/xyy0411/bleachVSnaruto/global"
 	"github.com/xyy0411/bleachVSnaruto/render/animation"
-	"github.com/xyy0411/bleachVSnaruto/render/draw"
 )
 
 type System interface {
@@ -29,7 +29,7 @@ type Engine struct {
 func New() *Engine {
 	return &Engine{
 		Time: &time.Time{
-			TPS: 30,
+			TPS: 60,
 		},
 		InputSystem:     &input.System{},
 		AnimationSystem: &animation.System{},
@@ -64,7 +64,7 @@ func (e *Engine) Update() {
 }
 
 func (e *Engine) Draw(screen *ebiten.Image) {
-	draw.Ground(screen, e.PhysicsSystem.World.GroundY)
+	zangetsu.Init(screen, e.PhysicsSystem.World.GroundY)
 	for _, actor := range e.actors {
 		rt := actor.GetRuntime()
 		frame := rt.AnimPlayer.CurrentFrame()

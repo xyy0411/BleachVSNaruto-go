@@ -44,7 +44,7 @@ func main() {
 		Gravity:    0.8,
 		MoveSpeed:  5,
 		JumpSpeed:  17,
-		DashSpeed:  10,
+		DashSpeed:  8,
 	}
 
 	e.InputSystem = inputSys

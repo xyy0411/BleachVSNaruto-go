@@ -22,7 +22,7 @@ func New() charactor.Character {
 		X:            100,
 		Y:            500,
 		OnGround:     true,
-		DashDuration: 0.6,
+		DashDuration: 0.3,
 		MaxJumps:     2,
 	}
 
@@ -117,7 +117,13 @@ func (r Rukia) Update() {
 		r.Runtime.State = state.Jump
 	}
 
-	if body.OnGround {
+	lockMoveX := r.Runtime.State == state.JustLanded || r.Runtime.State == state.JumpStart
+	if lockMoveX {
+		body.X -= body.VX
+		body.VX = 0
+	}
+
+	if body.OnGround && !lockMoveX && !body.Dashing {
 		if body.VX > 0 {
 			r.Runtime.Facing = 1
 		} else if body.VX < 0 {
