@@ -16,6 +16,9 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
+
+	//初始化角色
+	_ "github.com/xyy0411/bleachVSnaruto/characters/rukia"
 )
 
 func main() {
