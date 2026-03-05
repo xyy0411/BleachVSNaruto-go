@@ -1,6 +1,7 @@
 package rukia
 
 import (
+	"github.com/xyy0411/bleachVSnaruto/characters"
 	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/core/action"
 	"github.com/xyy0411/bleachVSnaruto/core/audio"
@@ -8,6 +9,10 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/models"
 	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
+
+func init() {
+	characters.AddChar("rukia", New)
+}
 
 type Rukia struct {
 	id   string
