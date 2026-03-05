@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/xyy0411/bleachVSnaruto/characters/rukia"
+	"log"
+
+	"github.com/xyy0411/bleachVSnaruto/characters"
 	"github.com/xyy0411/bleachVSnaruto/config"
 	coreaudio "github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/controller"
@@ -11,7 +13,6 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/engine"
 	"github.com/xyy0411/bleachVSnaruto/game"
 	"github.com/xyy0411/bleachVSnaruto/global"
-	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -20,7 +21,7 @@ import (
 func main() {
 	config.InitLog()
 
-	e := engine.New()
+	e := engine.New(60)
 	audioCtx := audio.NewContext(11000)
 	coreaudio.Init(audioCtx)
 
@@ -52,7 +53,8 @@ func main() {
 	e.RegisterSystem(controllerSys)
 	e.RegisterSystem(physicsSys)
 
-	player := rukia.New()
+	//以后逻辑修改为用户选择角色
+	player := characters.SelectChar("rukia")()
 	rt := player.GetRuntime()
 	rt.Body.Y = w.GroundY
 	rt.Body.OnGround = true
@@ -60,11 +62,9 @@ func main() {
 	physicsSys.Bodies = append(physicsSys.Bodies, rt.Body)
 
 	e.RegisterActor(player)
-
 	g := game.Game{Engine: e}
 	ebiten.SetWindowSize(800, 600)
 	ebiten.SetWindowTitle("死神VS火影 demo")
-	ebiten.SetTPS(60)
 	global.Logger.Infoln("开始")
 	if err := ebiten.RunGame(&g); err != nil {
 		log.Fatal(err)

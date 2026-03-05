@@ -26,11 +26,10 @@ type Engine struct {
 	AnimationSystem *animation.System
 }
 
-func New() *Engine {
+func New(TPS int) *Engine {
+	ebiten.SetTPS(TPS)
 	return &Engine{
-		Time: &time.Time{
-			TPS: 60,
-		},
+		Time:            new(time.Time).UpdataTPS(float64(TPS)),
 		InputSystem:     &input.System{},
 		AnimationSystem: &animation.System{},
 	}
