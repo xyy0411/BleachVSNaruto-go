@@ -12,9 +12,9 @@ type zangetsu struct {
 }
 
 func Init(screen *ebiten.Image, groundY float64) {
-	terrain := assets.LoadImage("./assets/maps/zangetsu_haka/Symbol 8.png")
-	decorationImg := assets.LoadImage("./assets/maps/zangetsu_haka/10.png")
-	background := assets.LoadImage("./assets/maps/zangetsu_haka/2.png")
+	terrain := assets.StdImagePool.GetImage("./assets/maps/zangetsu_haka/Symbol 8.png")
+	decorationImg := assets.StdImagePool.GetImage("./assets/maps/zangetsu_haka/10.png")
+	background := assets.StdImagePool.GetImage("./assets/maps/zangetsu_haka/2.png")
 	bgW := background.Bounds().Dx()
 	bgH := background.Bounds().Dy()
 
