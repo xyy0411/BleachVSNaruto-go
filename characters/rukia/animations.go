@@ -1,8 +1,6 @@
 package rukia
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/xyy0411/bleachVSnaruto/assets"
 	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/models"
 	"github.com/xyy0411/bleachVSnaruto/render/animation"
@@ -12,32 +10,32 @@ func buildAnimations() animation.Set {
 	return animation.Set{
 		ByState: map[state.State]*models.ActionAnimation{
 			state.Idle: {
-				Frames: loadIdleFrames(),
+				FramesKeys: loadIdleFrames(),
 				FPS:    6,
 				Loop:   true,
 			},
 			state.Run: {
-				Frames: loadRunFrames(),
+			FramesKeys: loadRunFrames(),
 				FPS:    5,
 				Loop:   true,
 			},
 			state.JumpStart: {
-				Frames: loadJumpStartFrames(),
+			FramesKeys: loadJumpStartFrames(),
 				FPS:    10,
 				Loop:   false,
 			},
 			state.Jump: {
-				Frames: loadJumpFrames(),
+			FramesKeys: loadJumpFrames(),
 				FPS:    13,
 				Loop:   true,
 			},
 			state.JustLanded: {
-				Frames: loadJustLandedFrames(),
+			FramesKeys: loadJustLandedFrames(),
 				FPS:    5,
 				Loop:   false,
 			},
 			state.Dash: {
-				Frames: loadDashFrames(),
+			FramesKeys: loadDashFrames(),
 				FPS:    5,
 				Loop:   false,
 			},
@@ -45,58 +43,45 @@ func buildAnimations() animation.Set {
 	}
 }
 
-func loadIdleFrames() []*ebiten.Image {
+func loadIdleFrames() []string {
 	url := "assets/characters/rukia/animation/idle/"
-	return []*ebiten.Image{
-		assets.LoadImage(url + "0.png"),
-		assets.LoadImage(url + "1.png"),
-		assets.LoadImage(url + "2.png"),
-		assets.LoadImage(url + "3.png"),
+	return []string{
+		url + "0.png", url + "1.png", url + "2.png", url + "3.png",
 	}
 }
 
-func loadRunFrames() []*ebiten.Image {
+func loadRunFrames() []string {
 	url := "assets/characters/rukia/animation/run/"
-	return []*ebiten.Image{
-		assets.LoadImage(url + "0.png"),
-		assets.LoadImage(url + "1.png"),
-		assets.LoadImage(url + "2.png"),
-		assets.LoadImage(url + "3.png"),
-		assets.LoadImage(url + "4.png"),
-		assets.LoadImage(url + "5.png"),
-		assets.LoadImage(url + "6.png"),
+	return []string{
+		url + "0.png", url + "1.png", url + "2.png", url + "3.png",
+		url + "4.png", url + "5.png", url + "6.png",
 	}
 }
 
-func loadJumpFrames() []*ebiten.Image {
+func loadJumpFrames() []string {
 	url := "assets/characters/rukia/animation/jump/"
-	return []*ebiten.Image{
-		assets.LoadImage(url + "0.png"),
+	return []string{
+		url + "0.png",
 	}
 }
 
-func loadJustLandedFrames() []*ebiten.Image {
+func loadJustLandedFrames() []string {
 	url := "assets/characters/rukia/animation/just_landed/"
-	return []*ebiten.Image{
-		assets.LoadImage(url + "0.png"),
-		assets.LoadImage(url + "1.png"),
-		assets.LoadImage(url + "2.png"),
-		assets.LoadImage(url + "3.png"),
+	return []string{
+		url + "0.png", url + "1.png", url + "2.png", url + "3.png",
 	}
 }
 
-func loadJumpStartFrames() []*ebiten.Image {
+func loadJumpStartFrames() []string {
 	url := "assets/characters/rukia/animation/jump_start/"
-	return []*ebiten.Image{
-		assets.LoadImage(url + "0.png"),
+	return []string{
+		url + "0.png",
 	}
 }
 
-func loadDashFrames() []*ebiten.Image {
+func loadDashFrames() []string {
 	url := "assets/characters/rukia/animation/dash/"
-	return []*ebiten.Image{
-		assets.LoadImage(url + "0.png"),
-		assets.LoadImage(url + "1.png"),
-		assets.LoadImage(url + "2.png"),
+	return []string{
+		url + "0.png", url + "1.png", url + "2.png",
 	}
 }

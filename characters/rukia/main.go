@@ -95,11 +95,11 @@ func (r Rukia) Update() {
 	jumpStartLocked := jumpStartAnim != nil &&
 		!jumpStartAnim.Loop &&
 		r.Runtime.AnimPlayer.Current == jumpStartAnim &&
-		r.Runtime.AnimPlayer.Frame < int64(len(jumpStartAnim.Frames)-1)
+		r.Runtime.AnimPlayer.Frame < int64(len(jumpStartAnim.FramesKeys)-1)
 	justLandedLocked := justLandedAnim != nil &&
 		!justLandedAnim.Loop &&
 		r.Runtime.AnimPlayer.Current == justLandedAnim &&
-		r.Runtime.AnimPlayer.Frame < int64(len(justLandedAnim.Frames)-1)
+		r.Runtime.AnimPlayer.Frame < int64(len(justLandedAnim.FramesKeys)-1)
 
 	switch {
 	case justLandedLocked:

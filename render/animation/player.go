@@ -1,9 +1,11 @@
 package animation
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/xyy0411/bleachVSnaruto/models"
 	"math"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/xyy0411/bleachVSnaruto/assets"
+	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
 // Player 动画播放器，用于控制和管理动画的播放状态
@@ -57,11 +59,11 @@ func (p *Player) Update(delta float64) {
 
 	for i := 0; i < steps; i++ {
 		p.Frame++
-		if p.Frame >= int64(len(p.Current.Frames)) {
+		if p.Frame >= int64(len(p.Current.FramesKeys)) {
 			if p.Current.Loop {
 				p.Frame = 0
 			} else {
-				p.Frame = int64(len(p.Current.Frames) - 1)
+				p.Frame = int64(len(p.Current.FramesKeys) - 1)
 			}
 		}
 	}
@@ -69,8 +71,9 @@ func (p *Player) Update(delta float64) {
 
 // CurrentFrame 返回玩家当前动画帧的图像
 func (p *Player) CurrentFrame() *ebiten.Image {
-	if p.Current == nil || len(p.Current.Frames) <= 0 {
+	if p.Current == nil || len(p.Current.FramesKeys) <= 0 {
 		return nil
 	}
-	return p.Current.Frames[p.Frame]
+	//return p.Current.FramesKeys[p.Frame]
+	return assets.StdImagePool.GetImage(p.Current.FramesKeys[p.Frame])
 }
