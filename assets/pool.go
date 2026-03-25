@@ -24,6 +24,7 @@ type ImagePool struct {
 type Image struct {
 	Meta     *ebiten.Image
 	LastUsed time.Time
+	LongTime bool //长期有效
 }
 
 // NewImagePool 创建一个新的图池实例
@@ -43,14 +44,14 @@ func NewImagePool() *ImagePool {
 }
 
 // LoadImage 将本地图片存入池
-func (p *ImagePool) LoadImage(path string) {
+func (p *ImagePool) LoadImage(path string, longTime ...bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	img, _, err := ebitenutil.NewImageFromFile(path)
 	if err != nil {
 		global.Logger.Fatal("load image failed:", path, err)
 	}
-	p.images[path] = &Image{Meta: img, LastUsed: time.Now()}
+	p.images[path] = &Image{Meta: img, LastUsed: time.Now(), LongTime: len(longTime) == 1 && longTime[0]}
 }
 
 func (p *ImagePool) LoadImageArray(arg ...string) {
@@ -59,15 +60,21 @@ func (p *ImagePool) LoadImageArray(arg ...string) {
 	}
 }
 
+func (p *ImagePool) LoadLongTimeImageArray(arg ...string) {
+	for _, path := range arg {
+		p.LoadImage(path, true)
+	}
+}
+
 // 存入图片
-func (p *ImagePool) PostImage(key string, img *ebiten.Image) {
+func (p *ImagePool) PostImage(key string, img *ebiten.Image, longTime ...bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	p.images[key] = &Image{Meta: img, LastUsed: time.Now()}
+	p.images[key] = &Image{Meta: img, LastUsed: time.Now(), LongTime: len(longTime) == 1 && longTime[0]}
 }
 
 // 从图片池返回图片,如果不存在尝试本地获取,如果依旧不存在则返回NilImage
-func (p *ImagePool) GetImage(key string) *ebiten.Image {
+func (p *ImagePool) GetImage(key string, longTime ...bool) *ebiten.Image {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if image, ok := p.images[key]; ok {
@@ -79,7 +86,7 @@ func (p *ImagePool) GetImage(key string) *ebiten.Image {
 		global.Logger.Fatal("load image failed:", key, err)
 		return NilImage
 	}
-	p.images[key] = &Image{Meta: img, LastUsed: time.Now()}
+	p.images[key] = &Image{Meta: img, LastUsed: time.Now(), LongTime: len(longTime) == 1 && longTime[0]}
 	return img
 }
 
@@ -104,6 +111,9 @@ func (p *ImagePool) Size() int {
 func (p *ImagePool) CleanUp() {
 	expirytime := time.Now().Add(-p.CleanupTick)
 	for key, elem := range p.images {
+		if elem.LongTime {
+			continue
+		}
 		if expirytime.After(elem.LastUsed) {
 			p.DeleteImage(key)
 		}
