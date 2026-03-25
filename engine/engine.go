@@ -21,17 +21,16 @@ type Engine struct {
 	system          []System
 	actors          []charactor.Character
 	Time            *time.Time
-	InputSystem     *input.System
+	InputSystem     []*input.System
 	PhysicsSystem   *physics.System
 	AnimationSystem *animation.System
 }
 
-func New() *Engine {
+func New(TPS int) *Engine {
+	ebiten.SetTPS(TPS)
 	return &Engine{
-		Time: &time.Time{
-			TPS: 60,
-		},
-		InputSystem:     &input.System{},
+		Time:            new(time.Time).UpdataTPS(float64(TPS)),
+		InputSystem:     []*input.System{},
 		AnimationSystem: &animation.System{},
 	}
 }
@@ -48,7 +47,9 @@ func (e *Engine) RegisterActor(a charactor.Character) {
 
 func (e *Engine) Update() {
 	e.Time.Tick()
-	e.InputSystem.Collect()
+	for _, v := range e.InputSystem {
+		v.Collect()
+	}
 
 	for _, system := range e.system {
 		system.Update()
