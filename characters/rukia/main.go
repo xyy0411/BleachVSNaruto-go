@@ -10,8 +10,10 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
 
+const RoleID = "rukia"
+
 func init() {
-	characters.AddChar("rukia", New)
+	characters.AddChar(RoleID, New)
 }
 
 type Rukia struct {

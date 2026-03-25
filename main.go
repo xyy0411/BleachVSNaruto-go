@@ -5,7 +5,7 @@ import (
 
 	"github.com/xyy0411/bleachVSnaruto/characters"
 	"github.com/xyy0411/bleachVSnaruto/config"
-	
+
 	coreaudio "github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/controller"
 	"github.com/xyy0411/bleachVSnaruto/core/input"
@@ -37,13 +37,20 @@ func main() {
 	controllerSys := &controller.System{
 		Input: inputSys,
 	}
+	inputSys2 := &input.System{
+		Time:   e.Time,
+		Source: &input.KeyboardSource{},
+	}
 
+	controllerSys2 := &controller.System{
+		Input: inputSys2,
+	}
 	w := world.World{
 		GroundY: 500,
 	}
 
 	physicsSys := &physics.System{
-		Controller: controllerSys,
+		Controller: []*controller.System{controllerSys, controllerSys2},
 		World:      &w,
 		Time:       e.Time,
 		Gravity:    0.8,
@@ -52,9 +59,10 @@ func main() {
 		DashSpeed:  8,
 	}
 
-	e.InputSystem = inputSys
+	e.InputSystem = append(e.InputSystem, inputSys, inputSys2)
 	e.PhysicsSystem = physicsSys
 	e.RegisterSystem(controllerSys)
+	e.RegisterSystem(controllerSys2)
 	e.RegisterSystem(physicsSys)
 
 	//以后逻辑修改为用户选择角色

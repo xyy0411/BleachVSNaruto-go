@@ -8,7 +8,7 @@ import (
 )
 
 type System struct {
-	Controller *controller.System
+	Controller []*controller.System
 	World      *world.World
 	Time       *gametime.Time
 
@@ -25,7 +25,7 @@ func (s *System) Name() string {
 }
 
 func (s *System) Update() {
-	intent := s.Controller.Current
+	intent := s.Controller[0].Current
 	delta := s.Time.Delta
 
 	for _, body := range s.Bodies {
