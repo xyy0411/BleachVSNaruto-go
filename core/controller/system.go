@@ -10,6 +10,8 @@ type System struct {
 	Input *input.System
 	// 本帧意图（供后续系统读取）
 	Current models.Intent
+	// 绑定的角色,控制器与角色绑定简化物理系统
+	Body *models.PhysicsBody
 
 	// 用于检测 JustPressed
 	prevAttack   bool

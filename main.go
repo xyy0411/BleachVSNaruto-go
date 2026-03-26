@@ -66,14 +66,23 @@ func main() {
 	e.RegisterSystem(physicsSys)
 
 	//以后逻辑修改为用户选择角色
+	//A
 	player := characters.SelectChar("rukia")()
 	rt := player.GetRuntime()
 	rt.Body.Y = w.GroundY
 	rt.Body.OnGround = true
-
-	physicsSys.Bodies = append(physicsSys.Bodies, rt.Body)
-
+	controllerSys.Body = rt.Body
 	e.RegisterActor(player)
+
+	player2 := characters.SelectChar("rukia")()
+	rt2 := player2.GetRuntime()
+	rt2.Body.Y = w.GroundY
+	rt2.Body.OnGround = true
+	rt2.Body.X = 550
+	rt2.Facing = -1
+	controllerSys2.Body = rt2.Body
+
+	e.RegisterActor(player2)
 	g := game.Game{Engine: e}
 	ebiten.SetWindowSize(800, 600)
 	ebiten.SetWindowTitle("死神VS火影 demo")
