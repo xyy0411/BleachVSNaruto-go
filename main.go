@@ -39,7 +39,7 @@ func main() {
 	}
 	inputSys2 := &input.System{
 		Time:   e.Time,
-		Source: &input.KeyboardSource{},
+		Source: &input.KeyboardSourceWithTwo{},
 	}
 
 	controllerSys2 := &controller.System{
