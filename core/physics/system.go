@@ -12,8 +12,6 @@ type System struct {
 	World      *world.World
 	Time       *gametime.Time
 
-	//Bodies []*models.PhysicsBody
-
 	Gravity   float64
 	MoveSpeed float64
 	JumpSpeed float64
