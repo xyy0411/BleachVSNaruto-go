@@ -1,8 +1,6 @@
 package input
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/xyy0411/bleachVSnaruto/models"
 )
@@ -27,9 +25,6 @@ func (k *KeyboardSource) Read() models.InputFrame {
 type KeyboardSourceWithTwo struct{}
 
 func (k *KeyboardSourceWithTwo) Read() models.InputFrame {
-	if ebiten.IsKeyPressed(ebiten.KeyDigit3) {
-		fmt.Println("3")
-	}
 	return models.InputFrame{
 		Left:       ebiten.IsKeyPressed(ebiten.KeyArrowLeft),
 		Right:      ebiten.IsKeyPressed(ebiten.KeyArrowRight),

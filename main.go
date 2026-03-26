@@ -66,7 +66,6 @@ func main() {
 	e.RegisterSystem(physicsSys)
 
 	//以后逻辑修改为用户选择角色
-	//A
 	player := characters.SelectChar("rukia")()
 	rt := player.GetRuntime()
 	rt.Body.Y = w.GroundY
