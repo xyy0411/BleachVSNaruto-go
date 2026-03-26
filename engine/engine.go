@@ -7,7 +7,6 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/core/input"
 	"github.com/xyy0411/bleachVSnaruto/core/physics"
 	"github.com/xyy0411/bleachVSnaruto/core/time"
-	"github.com/xyy0411/bleachVSnaruto/game_map/zangetsu"
 	"github.com/xyy0411/bleachVSnaruto/global"
 	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
@@ -65,7 +64,7 @@ func (e *Engine) Update() {
 }
 
 func (e *Engine) Draw(screen *ebiten.Image) {
-	zangetsu.Init(screen, e.PhysicsSystem.World.GroundY)
+	e.PhysicsSystem.World.GroundPainter.Draw(screen, e.PhysicsSystem.World.GroundY)
 	for _, actor := range e.actors {
 		rt := actor.GetRuntime()
 		frame := rt.AnimPlayer.CurrentFrame()

@@ -2,6 +2,8 @@ package game_map
 
 import "github.com/hajimehoshi/ebiten/v2"
 
+var StdRegistry = NewRegistry()
+
 type MapInter interface {
 	Draw(*ebiten.Image, float64)
 	Init()
@@ -9,25 +11,17 @@ type MapInter interface {
 }
 
 type BaseInfo struct {
-	BirdView *ebiten.Image
+	BirdViewKey string
 }
 
-type MapRegistry struct {
-	maps map[string]MapInter
+type MapRegistry map[string]MapInter
+
+//  新建地图注册中心实例
+func NewRegistry() MapRegistry {
+	return make(map[string]MapInter)
+
 }
 
-var registry *MapRegistry
-
-// GetRegistry 获取地图注册中心实例
-func GetRegistry() *MapRegistry {
-	if registry == nil {
-		registry = &MapRegistry{
-			maps: make(map[string]MapInter),
-		}
-	}
-	return registry
-}
-
-func (r *MapRegistry) RegisterMap(id string, mapImpl MapInter) {
-	r.maps[id] = mapImpl
+func (r MapRegistry) RegisterMap(id string, mapImpl MapInter) {
+	r[id] = mapImpl
 }
