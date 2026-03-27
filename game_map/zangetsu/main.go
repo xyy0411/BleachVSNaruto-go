@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	Name          = "zangetsu"
 	terrainuri    = "./assets/maps/zangetsu_haka/Symbol 8.png"
 	decorationuri = "./assets/maps/zangetsu_haka/10.png"
 	backgrounduri = "./assets/maps/zangetsu_haka/2.png"
@@ -17,7 +18,7 @@ type zangetsu struct {
 }
 
 func init() {
-	game_map.StdRegistry.RegisterMap("zangetsu", new(zangetsu))
+	game_map.StdRegistry.RegisterMap(Name, new(zangetsu))
 }
 
 func (z *zangetsu) Init() {
@@ -69,5 +70,8 @@ func (z *zangetsu) GetBaseInfo() game_map.BaseInfo {
 	screen.DrawImage(decorationImg, decorationOP)
 	assets.StdImagePool.PostImage(birdViewKey, screen)
 	z.BirdViewKey = birdViewKey
+
+	//other
+	z.ID = Name
 	return z.BaseInfo
 }

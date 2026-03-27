@@ -48,14 +48,14 @@ func main() {
 	controllerSys2 := &controller.System{
 		Input: inputSys2,
 	}
-	w := world.World{
+	w :=(&world.World{
 		GroundY:       500,
 		GroundPainter: game_map.StdRegistry["zangetsu"],
-	}
+	}).UpdateMapInfo()
 
 	physicsSys := &physics.System{
 		Controller: []*controller.System{controllerSys, controllerSys2},
-		World:      &w,
+		World:      w,
 		Time:       e.Time,
 		Gravity:    0.8,
 		MoveSpeed:  5,

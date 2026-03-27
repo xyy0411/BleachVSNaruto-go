@@ -3,9 +3,7 @@ package world
 // MapInfo 地图基础信息
 type MapInfo struct {
 	ID      string
-	Name    string
-	FileURL string
-	PicURL  string
+	PicURI  string
 	BGM     string
 	Bound   Bound
 }

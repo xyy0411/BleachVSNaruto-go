@@ -12,6 +12,7 @@ type MapInter interface {
 
 type BaseInfo struct {
 	BirdViewKey string
+	ID          string
 }
 
 type MapRegistry map[string]MapInter
