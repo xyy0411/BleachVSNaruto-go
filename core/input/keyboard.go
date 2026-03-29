@@ -30,11 +30,11 @@ func (k *KeyboardSourceWithTwo) Read() models.InputFrame {
 		Right:      ebiten.IsKeyPressed(ebiten.KeyArrowRight),
 		Up:         ebiten.IsKeyPressed(ebiten.KeyArrowUp),
 		Down:       ebiten.IsKeyPressed(ebiten.KeyArrowDown),
-		Attack:     ebiten.IsKeyPressed(ebiten.KeyDigit1),
-		Dash:       ebiten.IsKeyPressed(ebiten.KeyDigit2),
-		Jump:       ebiten.IsKeyPressed(ebiten.KeyDigit3),
-		LangAtk:    ebiten.IsKeyPressed(ebiten.KeyDigit4),
-		Outbreak:   ebiten.IsKeyPressed(ebiten.KeyDigit5),
-		Assistance: ebiten.IsKeyPressed(ebiten.KeyDigit6),
+		Attack:     ebiten.IsKeyPressed(ebiten.KeyNumpad1),
+		Dash:       ebiten.IsKeyPressed(ebiten.KeyNumpad2),
+		Jump:       ebiten.IsKeyPressed(ebiten.KeyNumpad3),
+		LangAtk:    ebiten.IsKeyPressed(ebiten.KeyNumpad4),
+		Outbreak:   ebiten.IsKeyPressed(ebiten.KeyNumpad5),
+		Assistance: ebiten.IsKeyPressed(ebiten.KeyNumpad6),
 	}
 }

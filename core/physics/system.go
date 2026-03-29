@@ -4,15 +4,13 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/core/controller"
 	gametime "github.com/xyy0411/bleachVSnaruto/core/time"
 	"github.com/xyy0411/bleachVSnaruto/core/world"
-	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
+// 这里假设Controller与Bodies对应
 type System struct {
 	Controller []*controller.System
 	World      *world.World
 	Time       *gametime.Time
-
-	Bodies []*models.PhysicsBody
 
 	Gravity   float64
 	MoveSpeed float64
@@ -25,10 +23,10 @@ func (s *System) Name() string {
 }
 
 func (s *System) Update() {
-	intent := s.Controller[0].Current
-	delta := s.Time.Delta
-
-	for _, body := range s.Bodies {
+	for i, player := range s.Controller {
+		intent := player.Current
+		delta := s.Time.Delta
+		body := player.Body
 		if body.MaxJumps <= 0 {
 			body.MaxJumps = 1
 		}
@@ -50,7 +48,7 @@ func (s *System) Update() {
 		if intent.MoveX != 0 {
 			body.DashDirection = intent.MoveX
 		} else if body.DashDirection == 0 {
-			body.DashDirection = 1
+			body.DashDirection = -2*i + 1
 		}
 
 		if !body.Dashing && intent.DashPressed && body.OnGround {

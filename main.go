@@ -5,6 +5,7 @@ import (
 
 	"github.com/xyy0411/bleachVSnaruto/characters"
 	"github.com/xyy0411/bleachVSnaruto/config"
+	"github.com/xyy0411/bleachVSnaruto/game_map"
 
 	coreaudio "github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/controller"
@@ -20,6 +21,8 @@ import (
 
 	//初始化角色
 	_ "github.com/xyy0411/bleachVSnaruto/characters/rukia"
+	//初始化地图
+	_ "github.com/xyy0411/bleachVSnaruto/game_map/zangetsu"
 )
 
 func main() {
@@ -39,19 +42,20 @@ func main() {
 	}
 	inputSys2 := &input.System{
 		Time:   e.Time,
-		Source: &input.KeyboardSource{},
+		Source: &input.KeyboardSourceWithTwo{},
 	}
 
 	controllerSys2 := &controller.System{
 		Input: inputSys2,
 	}
-	w := world.World{
-		GroundY: 500,
-	}
+	w :=(&world.World{
+		GroundY:       500,
+		GroundPainter: game_map.StdRegistry["zangetsu"],
+	}).UpdateMapInfo()
 
 	physicsSys := &physics.System{
 		Controller: []*controller.System{controllerSys, controllerSys2},
-		World:      &w,
+		World:      w,
 		Time:       e.Time,
 		Gravity:    0.8,
 		MoveSpeed:  5,
@@ -70,10 +74,18 @@ func main() {
 	rt := player.GetRuntime()
 	rt.Body.Y = w.GroundY
 	rt.Body.OnGround = true
-
-	physicsSys.Bodies = append(physicsSys.Bodies, rt.Body)
-
+	controllerSys.Body = rt.Body
 	e.RegisterActor(player)
+
+	player2 := characters.SelectChar("rukia")()
+	rt2 := player2.GetRuntime()
+	rt2.Body.Y = w.GroundY
+	rt2.Body.OnGround = true
+	rt2.Body.X = 550
+	rt2.Facing = -1
+	controllerSys2.Body = rt2.Body
+
+	e.RegisterActor(player2)
 	g := game.Game{Engine: e}
 	ebiten.SetWindowSize(800, 600)
 	ebiten.SetWindowTitle("死神VS火影 demo")

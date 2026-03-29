@@ -11,7 +11,7 @@ type Runtime struct {
 	Body *models.PhysicsBody
 
 	State state.State
-	// 朝左 1 朝右 -1
+	// 朝左 -1 朝右 1
 	Facing        int
 	PrevOnGround  bool
 	PrevVY        float64
