@@ -1,90 +1,90 @@
-# AI Code Review Rules
+# AI 代码审查规则
 
-This repository is written in Go.
+本仓库使用 Go 语言编写。
 
-When reviewing pull requests, follow the rules below.
+审查拉取请求时，请遵循以下规则。
 
 ---
 
-# Documentation
+# 文档
 
-All exported identifiers must have documentation comments.
+所有导出的标识符必须有文档注释。
 
-Rules:
+规则：
 
-1. Every exported function, type, method, or variable must have a comment.
-2. Comments must start with the identifier name (Go documentation style).
-3. Preferred language for new comments is Chinese.
-4. If a contributor already wrote comments in English, DO NOT request translation.
-5. Comments should clearly explain what the function does.
-6. If helpful, briefly describe parameters and return values.
+1. 每个导出的函数、类型、方法或变量必须有注释。
+2. 注释必须以标识符名称开头（Go 文档风格）。
+3. 新注释的首选语言是中文。
+4. 如果贡献者已经用英文写了注释，不要要求翻译。
+5. 注释应清楚解释函数的功能。
+6. 如果有帮助，可以简要描述参数和返回值。
 
-Example:
+示例：
 
 // RegisterCharacter 注册一个新的角色到角色注册表中。
 func RegisterCharacter(name string) error
 
-Avoid comments like:
+避免这样的注释：
 
 // 注册角色
 func RegisterCharacter(...)
 
-because Go documentation comments should start with the identifier name.
+因为 Go 文档注释应以标识符名称开头。
 
 ---
 
-# Code Style
+# 代码风格
 
-Follow idiomatic Go style.
+遵循惯用的 Go 语言风格。
 
-General principles:
+一般原则：
 
-- Prefer simple and readable code
-- Avoid unnecessary abstraction
-- Avoid overly complex logic
-- Keep functions focused on a single responsibility
-- Prefer clarity to cleverness
+- 偏好简单且可读的代码
+- 避免不必要的抽象
+- 避免过于复杂的逻辑
+- 保持函数职责单一
+- 偏好清晰而非巧妙
 
-Prefer this style:
+偏好这种风格：
 
 if err != nil {
 return err
 }
 
-Avoid deeply nested logic where possible.
+避免深层嵌套的逻辑。
 
 ---
 
-# Error Handling
+# 错误处理
 
-Errors should always be handled explicitly.
+错误应该始终被显式处理。
 
-Rules:
+规则：
 
-- Do not ignore returned errors
-- Do not use empty error checks
-- Prefer returning errors to hiding them
-- Error messages should be meaningful
+- 不要忽略返回的错误
+- 不要使用空错误检查
+- 倾向于返回错误而不是隐藏它们
+- 错误信息应有意义
 
-Avoid patterns like:
+避免这样的模式：
 
 if err != nil {
 }
 
 ---
 
-# Naming
+# 命名
 
-Names should clearly describe their purpose.
+名称应清楚描述其用途。
 
-Avoid vague names such as:
+避免模糊的名称，如：
 
 DoThing
 HandleStuff
 ProcessData
 Manager2
 
-Prefer descriptive names such as:
+偏好描述性名称，如：
 
 LoadCharacterData
 RegisterPlayer
@@ -92,52 +92,52 @@ HandlePlayerInput
 
 ---
 
-# Code Quality
+# 代码质量
 
-When reviewing code, prioritize:
+审查代码时，优先考虑：
 
-1. Missing documentation comments
-2. Ignored errors
-3. Potential bugs
-4. Confusing logic
-5. Poor naming
-6. Unnecessary complexity
+1. 缺少文档注释
+2. 被忽略的错误
+3. 潜在的 bug
+4. 令人困惑的逻辑
+5. 糟糕的命名
+6. 不必要的复杂性
 
-If possible, suggest clearer implementations.
-
----
-
-# Performance
-
-Avoid unnecessary allocations.
-
-Prefer simple data structures.
-
-Do not prematurely optimize, but point out obvious inefficiencies.
+如果可能，建议更清晰的实现。
 
 ---
 
-# Concurrency (if present)
+# 性能
 
-When goroutines or shared data are used, check for:
+避免不必要的内存分配。
 
-- race conditions
-- unsafe shared state
-- missing synchronization
+偏好简单的数据结构。
 
-Suggest safer patterns when needed.
+不要过早优化，但要指出明显的低效问题。
 
 ---
 
-# Suggestions
+# 并发（如果存在）
 
-When problems are found:
+当使用 goroutine 或共享数据时，检查：
 
-- Explain the issue clearly
-- Suggest a better implementation
-- Provide example code if helpful
+- 竞态条件
+- 不安全的共享状态
+- 缺少同步机制
 
-Keep suggestions concise and actionable.
+当需要时，建议更安全的模式。
 
-If the code already follows repository rules and no issues are found,
-simply react with 👍.
+---
+
+# 建议
+
+当发现问题时：
+
+- 清楚地解释问题
+- 建议更好的实现方式
+- 如果有帮助，提供示例代码
+
+保持建议简洁且可操作。
+
+如果代码已经遵循仓库规则且没有发现问题，
+只需回应 👍。
