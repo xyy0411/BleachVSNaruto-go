@@ -6,7 +6,12 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/game_map"
 )
 
+const (
+	logicalHeight = 600
+)
+
 var (
+	// Name 是斩月地图的注册名。
 	Name          = "zangetsu"
 	terrainuri    = "./assets/maps/zangetsu_haka/Symbol 8.png"
 	decorationuri = "./assets/maps/zangetsu_haka/10.png"
@@ -22,56 +27,48 @@ func init() {
 }
 
 func (z *zangetsu) Init() {
-	assets.StdImagePool.LoadImage(terrainuri)
-	assets.StdImagePool.LoadImage(decorationuri)
-	assets.StdImagePool.LoadImage(backgrounduri)
+	assets.StdImagePool.LoadLongTimeImageArray(terrainuri, decorationuri, backgrounduri)
 }
-func (z *zangetsu) Draw(screen *ebiten.Image, groundY float64) {
-	terrain := assets.StdImagePool.GetImage(terrainuri)
-	decorationImg := assets.StdImagePool.GetImage(decorationuri)
-	background := assets.StdImagePool.GetImage(backgrounduri)
-	bgW := background.Bounds().Dx()
-	bgH := background.Bounds().Dy()
 
-	tilesX := (screen.Bounds().Dx() / bgW) + 1
-	tilesY := (screen.Bounds().Dy() / bgH) + 1
-
-	for y := range tilesY {
-		for x := range tilesX {
-			opts := &ebiten.DrawImageOptions{}
-			opts.GeoM.Translate(float64(x*bgW), float64(y*bgH))
-			screen.DrawImage(background, opts)
-		}
-	}
-	terrainOP := &ebiten.DrawImageOptions{}
-	terrainOP.GeoM.Translate(0, float64(600-terrain.Bounds().Dy()))
-	screen.DrawImage(terrain, terrainOP)
-	decorationOP := &ebiten.DrawImageOptions{}
-	decorationOP.GeoM.Translate(0, float64(600-decorationImg.Bounds().Dy()))
-	screen.DrawImage(decorationImg, decorationOP)
+func (z *zangetsu) Draw(screen *ebiten.Image, cameraX float64, zoom float64, _ float64) {
+	worldImage := assets.StdImagePool.GetImage(z.GetBaseInfo().BirdViewKey, true)
+	offsetY := (float64(screen.Bounds().Dy()) - float64(screen.Bounds().Dy())*zoom) / 2
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(zoom, zoom)
+	op.GeoM.Translate(-cameraX*zoom, offsetY)
+	screen.DrawImage(worldImage, op)
 }
 
 func (z *zangetsu) GetBaseInfo() game_map.BaseInfo {
-	birdViewKey := "zangetsu_view"
-	terrain := assets.StdImagePool.GetImage(terrainuri)
-	decorationImg := assets.StdImagePool.GetImage(decorationuri)
-	background := assets.StdImagePool.GetImage(backgrounduri)
-	bgW := background.Bounds().Dx()
-	bgH := background.Bounds().Dy()
+	if z.BirdViewKey != "" {
+		return z.BaseInfo
+	}
 
-	screen := ebiten.NewImage(bgW, bgH)
-	screen.DrawImage(background, &ebiten.DrawImageOptions{})
+	birdViewKey := "zangetsu_view"
+	terrain := assets.StdImagePool.GetImage(terrainuri, true)
+	decorationImg := assets.StdImagePool.GetImage(decorationuri, true)
+	background := assets.StdImagePool.GetImage(backgrounduri, true)
+
+	worldWidth := terrain.Bounds().Dx()
+	bgWidth := background.Bounds().Dx()
+
+	screen := ebiten.NewImage(worldWidth, logicalHeight)
+	for x := 0; x < worldWidth; x += bgWidth {
+		backgroundOP := &ebiten.DrawImageOptions{}
+		backgroundOP.GeoM.Translate(float64(x), 0)
+		screen.DrawImage(background, backgroundOP)
+	}
 
 	terrainOP := &ebiten.DrawImageOptions{}
-	terrainOP.GeoM.Translate(0, float64(600-terrain.Bounds().Dy()))
+	terrainOP.GeoM.Translate(0, float64(logicalHeight-terrain.Bounds().Dy()))
 	screen.DrawImage(terrain, terrainOP)
-	decorationOP := &ebiten.DrawImageOptions{}
-	decorationOP.GeoM.Translate(0, float64(600-decorationImg.Bounds().Dy()))
-	screen.DrawImage(decorationImg, decorationOP)
-	assets.StdImagePool.PostImage(birdViewKey, screen)
-	z.BirdViewKey = birdViewKey
 
-	//other
+	decorationOP := &ebiten.DrawImageOptions{}
+	decorationOP.GeoM.Translate(0, float64(logicalHeight-decorationImg.Bounds().Dy()))
+	screen.DrawImage(decorationImg, decorationOP)
+
+	assets.StdImagePool.PostImage(birdViewKey, screen, true)
+	z.BirdViewKey = birdViewKey
 	z.ID = Name
 	return z.BaseInfo
 }
