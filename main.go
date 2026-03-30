@@ -25,6 +25,11 @@ import (
 	_ "github.com/xyy0411/bleachVSnaruto/game_map/zangetsu"
 )
 
+const (
+	logicalWidth  = 800
+	logicalHeight = 600
+)
+
 func main() {
 	config.InitLog()
 
@@ -48,9 +53,16 @@ func main() {
 	controllerSys2 := &controller.System{
 		Input: inputSys2,
 	}
-	w :=(&world.World{
+	w := (&world.World{
 		GroundY:       500,
 		GroundPainter: game_map.StdRegistry["zangetsu"],
+		Camera: &world.Camera{
+			ViewportWidth:  logicalWidth,
+			ViewportHeight: logicalHeight,
+			Zoom:           1,
+			MaxZoom:        1,
+			FocusPadding:   160,
+		},
 	}).UpdateMapInfo()
 
 	physicsSys := &physics.System{
@@ -87,7 +99,8 @@ func main() {
 
 	e.RegisterActor(player2)
 	g := game.Game{Engine: e}
-	ebiten.SetWindowSize(800, 600)
+	ebiten.SetWindowSize(logicalWidth, logicalHeight)
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowTitle("死神VS火影 demo")
 	global.Logger.Infoln("开始")
 	if err := ebiten.RunGame(&g); err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/core/world"
 )
 
-// 这里假设Controller与Bodies对应
+// System 负责更新角色的基础物理状态
 type System struct {
 	Controller []*controller.System
 	World      *world.World
@@ -18,20 +18,24 @@ type System struct {
 	DashSpeed float64
 }
 
+// Name ...
 func (s *System) Name() string {
 	return "physics"
 }
 
+// Update 推进所有受控角色的物理状态
 func (s *System) Update() {
 	for i, player := range s.Controller {
 		intent := player.Current
 		delta := s.Time.Delta
 		body := player.Body
+		if body == nil {
+			continue
+		}
 		if body.MaxJumps <= 0 {
 			body.MaxJumps = 1
 		}
 
-		// 更新冲刺计时，并在未结束前保持冲刺状态
 		if body.DashTimer > 0 {
 			body.DashTimer -= delta
 			if body.DashTimer <= 0 {
@@ -44,7 +48,6 @@ func (s *System) Update() {
 			body.Dashing = false
 		}
 
-		// 只有在冲刺结束后且重新按下冲刺键时才可重新冲刺
 		if intent.MoveX != 0 {
 			body.DashDirection = intent.MoveX
 		} else if body.DashDirection == 0 {
@@ -62,12 +65,12 @@ func (s *System) Update() {
 		if body.Dashing {
 			baseVX := (float64(body.DashDirection) * s.DashSpeed * s.MoveSpeed) / 2.0
 			if body.DashDuration > 0 {
-				progress := 1 - (body.DashTimer / body.DashDuration) // 0..1
+				progress := 1 - (body.DashTimer / body.DashDuration)
 				var speedScale float64
 				if progress < 0.5 {
-					speedScale = progress * 2 // accelerate
+					speedScale = progress * 2
 				} else {
-					speedScale = (1 - progress) * 2 // decelerate
+					speedScale = (1 - progress) * 2
 				}
 				body.VX = baseVX * speedScale
 				minDashVX := float64(body.DashDirection) * (s.MoveSpeed * 1.01)
@@ -94,6 +97,14 @@ func (s *System) Update() {
 
 		body.X += body.VX
 		body.Y += body.VY
+
+		clampedX := s.World.ClampBodyX(body.X)
+		if clampedX != body.X {
+			body.X = clampedX
+			body.VX = 0
+			body.Dashing = false
+			body.DashTimer = 0
+		}
 
 		body.Y, body.OnGround = s.World.ResolveGround(body.Y)
 
