@@ -5,6 +5,7 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/game_map"
 )
 
+// World 保存地图、地面和摄像机等战斗场景环境信息。
 type World struct {
 	GroundY       float64
 	GroundPainter game_map.MapInter
@@ -21,6 +22,7 @@ func (w *World) ResolveGround(y float64) (newY float64, onGround bool) {
 	return y, false
 }
 
+// UpdateMapInfo 初始化地图信息，并在可用时同步修正摄像机状态。
 func (w *World) UpdateMapInfo() *World {
 	if w.GroundPainter == nil {
 		return w
@@ -41,6 +43,7 @@ func (w *World) UpdateMapInfo() *World {
 	return w
 }
 
+// FollowTargetsX 使用多个目标点更新摄像机的水平跟随。
 func (w *World) FollowTargetsX(targets ...float64) {
 	if w == nil || w.Camera == nil || w.MapInfo == nil || len(targets) == 0 {
 		return
@@ -48,10 +51,12 @@ func (w *World) FollowTargetsX(targets ...float64) {
 	w.Camera.FollowTargets(w.MapInfo.Bound, targets...)
 }
 
+// ClampBodyX 将角色横坐标限制在地图边界内。
 func (w *World) ClampBodyX(x float64) float64 {
 	return w.ClampBodyRectX(x, 0)
 }
 
+// ClampBodyRectX 将带宽度的物体横坐标限制在地图边界内。
 func (w *World) ClampBodyRectX(x float64, width float64) float64 {
 	if w == nil || w.MapInfo == nil {
 		return x
@@ -76,6 +81,7 @@ func (w *World) ClampBodyRectX(x float64, width float64) float64 {
 	return x
 }
 
+// BGM 设置当前地图的背景音乐资源标识。
 func (w *World) BGM(uri string) *World {
 	if w.MapInfo != nil {
 		w.MapInfo.BGM = uri
