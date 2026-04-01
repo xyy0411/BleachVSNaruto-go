@@ -27,14 +27,16 @@ func (w *World) UpdateMapInfo() *World {
 	if w.GroundPainter == nil {
 		return w
 	}
-
-	w.GroundPainter.Init()
-	info := w.GroundPainter.GetBaseInfo()
-	vp := assets.StdImagePool.GetImage(info.BirdViewKey)
-	w.MapInfo = &MapInfo{
-		ID:     info.ID,
-		PicURI: info.BirdViewKey,
-		Bound:  Bound{Left: 0, Right: float64(vp.Bounds().Dx()), Bottom: 0},
+	//地图信息未加载时,或地图图像缺失时更新
+	if w.MapInfo == nil || w.MapInfo.PicURI == "" {
+		w.GroundPainter.Init()
+		info := w.GroundPainter.GetBaseInfo()
+		vp := assets.StdImagePool.GetImage(info.BirdViewKey)
+		w.MapInfo = &MapInfo{
+			ID:     info.ID,
+			PicURI: info.BirdViewKey,
+			Bound:  Bound{Left: 0, Right: float64(vp.Bounds().Dx()), Bottom: 0},
+		}
 	}
 	if w.Camera != nil {
 		w.Camera.ApplyZoomLimit(w.MapInfo.Bound)

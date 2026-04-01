@@ -27,7 +27,7 @@ func init() {
 }
 
 func (z *zangetsu) Init() {
-	assets.StdImagePool.LoadLongTimeImageArray(terrainuri, decorationuri, backgrounduri)
+	assets.StdImagePool.LoadImageArray(terrainuri, decorationuri, backgrounduri)
 }
 
 func (z *zangetsu) Draw(screen *ebiten.Image, cameraX float64, zoom float64, _ float64) {
@@ -45,9 +45,9 @@ func (z *zangetsu) GetBaseInfo() game_map.BaseInfo {
 	}
 
 	birdViewKey := "zangetsu_view"
-	terrain := assets.StdImagePool.GetImage(terrainuri, true)
-	decorationImg := assets.StdImagePool.GetImage(decorationuri, true)
-	background := assets.StdImagePool.GetImage(backgrounduri, true)
+	terrain := assets.StdImagePool.GetImage(terrainuri)
+	decorationImg := assets.StdImagePool.GetImage(decorationuri)
+	background := assets.StdImagePool.GetImage(backgrounduri)
 
 	worldWidth := terrain.Bounds().Dx()
 	bgWidth := background.Bounds().Dx()
