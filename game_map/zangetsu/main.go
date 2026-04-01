@@ -50,7 +50,7 @@ func (z *zangetsu) GetBaseInfo() game_map.BaseInfo {
 	background := assets.StdImagePool.GetImage(backgrounduri)
 
 	worldWidth := terrain.Bounds().Dx()
-	bgWidth := background.Bounds().Dx()
+	bgWidth := background.Bounds().Dx() - 1
 
 	screen := ebiten.NewImage(worldWidth, logicalHeight)
 	for x := 0; x < worldWidth; x += bgWidth {
