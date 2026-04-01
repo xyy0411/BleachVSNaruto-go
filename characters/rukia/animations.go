@@ -21,7 +21,7 @@ func buildAnimations() animation.Set {
 				Loop:       true,
 			},
 			state.JumpStart: {
-				FramesKeys: assets.LoadCharacterActionFrames(RoleID, "jump_star"),
+				FramesKeys: assets.LoadCharacterActionFrames(RoleID, "jump_start"),
 				FPS:        10,
 				Loop:       false,
 			},
@@ -32,7 +32,7 @@ func buildAnimations() animation.Set {
 			},
 			state.JustLanded: {
 				FramesKeys: assets.LoadCharacterActionFrames(RoleID, "just_landed"),
-				FPS:        5,
+				FPS:        10,
 				Loop:       false,
 			},
 			state.Dash: {
