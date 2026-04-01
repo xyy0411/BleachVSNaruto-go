@@ -27,7 +27,6 @@ func (w *World) UpdateMapInfo() *World {
 	if w.GroundPainter == nil {
 		return w
 	}
-
 	w.GroundPainter.Init()
 	info := w.GroundPainter.GetBaseInfo()
 	vp := assets.StdImagePool.GetImage(info.BirdViewKey)
