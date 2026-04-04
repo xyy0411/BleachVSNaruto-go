@@ -3,11 +3,10 @@ package rukia
 import (
 	"github.com/xyy0411/bleachVSnaruto/characters"
 	"github.com/xyy0411/bleachVSnaruto/common/state"
-	"github.com/xyy0411/bleachVSnaruto/core/action"
+	"github.com/xyy0411/bleachVSnaruto/core/animatable"
 	"github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/charactor"
 	"github.com/xyy0411/bleachVSnaruto/models"
-	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
 
 const RoleID = "rukia"
@@ -40,7 +39,7 @@ func New() charactor.Character {
 		Audio:      charactor.DefaultAudioConfig(),
 	}
 
-	player := animation.Player{}
+	player := animatable.Player{}
 
 	rt := &charactor.Runtime{
 		Body:          body,
@@ -53,7 +52,7 @@ func New() charactor.Character {
 
 	return &Rukia{
 		id:      "rukia",
-		name:    "rukia",
+		name:    "朽木露琪亚",
 		Runtime: rt,
 		Data:    data,
 	}
@@ -76,12 +75,12 @@ func (r Rukia) GetName() string {
 }
 
 func (r Rukia) Update() {
-	body := r.Runtime.Body
+	physicsBody := r.Runtime.Body
 	events := charactor.Events{}
-	if !r.Runtime.PrevOnGround && body.OnGround && r.Runtime.PrevVY > 0 {
+	if !r.Runtime.PrevOnGround && physicsBody.OnGround && r.Runtime.PrevVY > 0 {
 		events.JustLanded = true
 	}
-	if body.JumpsUsed > r.Runtime.PrevJumpsUsed && body.VY < 0 {
+	if physicsBody.JumpsUsed > r.Runtime.PrevJumpsUsed && physicsBody.VY < 0 {
 		events.JumpStart = true
 	}
 	r.Runtime.Events = events
@@ -112,10 +111,10 @@ func (r Rukia) Update() {
 		r.Runtime.State = state.JustLanded
 	case events.JumpStart:
 		r.Runtime.State = state.JumpStart
-	case body.Dashing:
+	case physicsBody.Dashing:
 		r.Runtime.State = state.Dash
-	case body.OnGround:
-		if body.VX != 0 {
+	case physicsBody.OnGround:
+		if physicsBody.VX != 0 {
 			r.Runtime.State = state.Run
 		} else {
 			r.Runtime.State = state.Idle
@@ -126,25 +125,21 @@ func (r Rukia) Update() {
 
 	lockMoveX := r.Runtime.State == state.JustLanded || r.Runtime.State == state.JumpStart
 	if lockMoveX {
-		body.X -= body.VX
-		body.VX = 0
+		physicsBody.X -= physicsBody.VX
+		physicsBody.VX = 0
 	}
 
-	if body.OnGround && !lockMoveX && !body.Dashing {
-		if body.VX > 0 {
+	if physicsBody.OnGround && !lockMoveX && !physicsBody.Dashing {
+		if physicsBody.VX > 0 {
 			r.Runtime.Facing = 1
-		} else if body.VX < 0 {
+		} else if physicsBody.VX < 0 {
 			r.Runtime.Facing = -1
 		}
 	}
 
 	r.Runtime.AnimPlayer.Play(r.Data.Animations.ByState[r.Runtime.State])
 
-	r.Runtime.PrevOnGround = body.OnGround
-	r.Runtime.PrevVY = body.VY
-	r.Runtime.PrevJumpsUsed = body.JumpsUsed
-}
-
-func (r Rukia) GetAction() *action.Runtime {
-	return &action.Runtime{}
+	r.Runtime.PrevOnGround = physicsBody.OnGround
+	r.Runtime.PrevVY = physicsBody.VY
+	r.Runtime.PrevJumpsUsed = physicsBody.JumpsUsed
 }

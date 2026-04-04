@@ -21,6 +21,7 @@ type ImagePool struct {
 	CleanupTick time.Duration // 清理间隔
 	images      map[string]*Image
 }
+
 type Image struct {
 	Meta     *ebiten.Image
 	LastUsed time.Time
@@ -66,14 +67,14 @@ func (p *ImagePool) LoadLongTimeImageArray(arg ...string) {
 	}
 }
 
-// 存入图片
+// PostImage 存入图片
 func (p *ImagePool) PostImage(key string, img *ebiten.Image, longTime ...bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.images[key] = &Image{Meta: img, LastUsed: time.Now(), LongTime: len(longTime) == 1 && longTime[0]}
 }
 
-// 从图片池返回图片,如果不存在尝试本地获取,如果依旧不存在则返回NilImage
+// GetImage 从图片池返回图片,如果不存在尝试本地获取,如果依旧不存在则返回NilImage
 func (p *ImagePool) GetImage(key string, longTime ...bool) *ebiten.Image {
 	p.mu.Lock()
 	defer p.mu.Unlock()

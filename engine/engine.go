@@ -8,7 +8,6 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/core/physics"
 	"github.com/xyy0411/bleachVSnaruto/core/time"
 	"github.com/xyy0411/bleachVSnaruto/global"
-	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
 
 type System interface {
@@ -22,7 +21,7 @@ type Engine struct {
 	Time            *time.Time
 	InputSystem     []*input.System
 	PhysicsSystem   *physics.System
-	AnimationSystem *animation.System
+	AnimationSystem *animatable.System
 }
 
 func New(TPS int) *Engine {
@@ -30,7 +29,7 @@ func New(TPS int) *Engine {
 	return &Engine{
 		Time:            new(time.Time).UpdataTPS(float64(TPS)),
 		InputSystem:     []*input.System{},
-		AnimationSystem: &animation.System{},
+		AnimationSystem: &animatable.System{},
 	}
 }
 
@@ -73,23 +72,17 @@ func (e *Engine) Update() {
 			continue
 		}
 
-		frame := rt.AnimPlayer.CurrentFrame()
-		frameWidth := 0.0
-		if frame != nil {
-			frameWidth = float64(frame.Bounds().Dx())
-		}
-
-		clampedX := e.PhysicsSystem.World.ClampBodyRectX(rt.Body.X, frameWidth)
-		if clampedX != rt.Body.X {
-			rt.Body.X = clampedX
+		leftX, frameWidth, _ := currentFrameLayout(rt)
+		clampedLeftX := e.PhysicsSystem.World.ClampBodyRectX(leftX, frameWidth)
+		clampedBodyX := rt.Body.X + (clampedLeftX - leftX)
+		if clampedBodyX != rt.Body.X {
+			rt.Body.X = clampedBodyX
 			rt.Body.VX = 0
 			rt.Body.Dashing = false
 			rt.Body.DashTimer = 0
 		}
 
-		// 摄像头按角色中心点跟随
-		// 这样左右朝向变化或动画宽度变化时更稳定
-		targets = append(targets, rt.Body.X+frameWidth/2)
+		targets = append(targets, rt.Body.X)
 	}
 	e.PhysicsSystem.World.FollowTargetsX(targets...)
 }
@@ -112,15 +105,60 @@ func (e *Engine) Draw(screen *ebiten.Image) {
 		}
 
 		op := &ebiten.DrawImageOptions{}
-
 		if rt.Facing == -1 {
 			op.GeoM.Scale(-1, 1)
 			op.GeoM.Translate(float64(frame.Bounds().Dx()), 0)
 		}
 
 		op.GeoM.Scale(cameraZoom, cameraZoom)
-		drawX, drawY := camera.WorldToScreen(rt.Body.X, rt.Body.Y-float64(frame.Bounds().Dy()))
+		drawX, drawY := camera.WorldToScreen(frameDrawPosition(rt))
 		op.GeoM.Translate(drawX, drawY)
 		screen.DrawImage(frame, op)
 	}
+}
+
+// currentFrameLayout 计算当前动画帧的布局信息
+func currentFrameLayout(rt *charactor.Runtime) (leftX float64, width float64, centerX float64) {
+	frame := rt.AnimPlayer.CurrentFrame()
+	if frame == nil {
+		return rt.Body.X, 0, rt.Body.X
+	}
+
+	meta := rt.AnimPlayer.CurrentFrameMeta()
+	frameWidth := float64(frame.Bounds().Dx())
+	originX := 0.0
+	if meta != nil {
+		originX = meta.Origin.X
+	}
+
+	// 根据角色朝向计算帧图像的左边界位置
+	if rt.Facing == -1 {
+		leftX = rt.Body.X - (frameWidth - originX)
+	} else {
+		leftX = rt.Body.X - originX
+	}
+
+	return leftX, frameWidth, leftX + frameWidth/2
+}
+
+func frameDrawPosition(rt *charactor.Runtime) (float64, float64) {
+	frame := rt.AnimPlayer.CurrentFrame()
+	if frame == nil {
+		return rt.Body.X, rt.Body.Y
+	}
+
+	meta := rt.AnimPlayer.CurrentFrameMeta()
+	originX := 0.0
+	originY := float64(frame.Bounds().Dy())
+	if meta != nil {
+		originX = meta.Origin.X
+		originY = meta.Origin.Y
+	}
+
+	drawX := rt.Body.X - originX
+	if rt.Facing == -1 {
+		drawX = rt.Body.X - (float64(frame.Bounds().Dx()) - originX)
+	}
+
+	return drawX, rt.Body.Y - originY
 }

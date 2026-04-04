@@ -4,7 +4,6 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
 	"github.com/xyy0411/bleachVSnaruto/models"
-	"github.com/xyy0411/bleachVSnaruto/render/animation"
 )
 
 type Runtime struct {
@@ -18,7 +17,7 @@ type Runtime struct {
 	PrevJumpsUsed int
 	Events        Events
 
-	AnimPlayer animation.Player
+	AnimPlayer animatable.Player
 }
 
 func (r *Runtime) AnimationPlayer() animatable.AnimationPlayer {
