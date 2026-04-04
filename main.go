@@ -20,6 +20,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 
 	//初始化角色
+	_ "github.com/xyy0411/bleachVSnaruto/characters/narutoS"
 	_ "github.com/xyy0411/bleachVSnaruto/characters/rukia"
 	//初始化地图
 	_ "github.com/xyy0411/bleachVSnaruto/game_map/zangetsu"
@@ -82,7 +83,7 @@ func main() {
 	e.RegisterSystem(physicsSys)
 
 	//以后逻辑修改为用户选择角色
-	player := characters.SelectChar("rukia")()
+	player := characters.SelectChar("narutoS")()
 	rt := player.GetRuntime()
 	rt.Body.Y = w.GroundY
 	rt.Body.OnGround = true

@@ -1,14 +1,12 @@
 package charactor
 
 import (
-	"github.com/xyy0411/bleachVSnaruto/core/action"
-	"github.com/xyy0411/bleachVSnaruto/render/animation"
+	"github.com/xyy0411/bleachVSnaruto/core/animatable"
 )
 
 type Character interface {
 	Update()
 	GetRuntime() *Runtime
-	GetAction() *action.Runtime
 	GetID() string
 	GetName() string
 	GetData() *Data
@@ -17,7 +15,7 @@ type Character interface {
 type Data struct {
 	MoveSpeed  float64
 	JumpPower  float64
-	Animations animation.Set
+	Animations animatable.Set
 	Audio      AudioConfig
 }
 
