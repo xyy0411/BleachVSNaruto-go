@@ -25,30 +25,27 @@ type AudioConfig struct {
 	Volume float64
 }
 type Rect struct {
-	Left   float64
-	Top    float64
-	Width  float64
-	Height float64
+	animatable.Rect
 	//受击框生效
 	Action bool
 }
 
-func (r *Rect) Right() float64 {
-	return r.Left + r.Width
+func (r *Rect) Right() int {
+	return r.X + r.W
 }
 
-func (r *Rect) Bottom() float64 {
-	return r.Top + r.Height
+func (r *Rect) Bottom() int {
+	return r.Y + r.H
 }
 
 func (r *Rect) Intersects(other *Rect) bool {
 	if !r.Action || !other.Action {
 		return false
 	}
-	if r.Right() < other.Left || other.Right() < r.Left {
+	if r.Right() < other.X || other.Right() < r.X {
 		return false
 	}
-	if r.Bottom() < other.Top || r.Top < other.Bottom() {
+	if r.Bottom() < other.Y || r.Y < other.Bottom() {
 		return false
 	}
 	return true

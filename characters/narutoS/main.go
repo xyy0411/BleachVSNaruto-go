@@ -60,7 +60,7 @@ func New() charactor.Character {
 	}
 
 	rt := &charactor.Runtime{
-		BodyRect:      &charactor.Rect{Width: 40, Height: 50, Action: true},
+		BodyRect:      &charactor.Rect{Rect: animatable.Rect{W: 40, H: 50}, Action: true},
 		Body:          body,
 		Facing:        1,
 		PrevOnGround:  body.OnGround,

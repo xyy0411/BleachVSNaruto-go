@@ -39,8 +39,8 @@ func (r *Runtime) UpdataRect() {
 	if r.State == state.Fall {
 		r.BodyRect.Action = false
 	}
-	r.BodyRect.Left = r.Body.X
-	r.BodyRect.Top = r.Body.Y
+	r.BodyRect.X = int(r.Body.X)
+	r.BodyRect.Y = int(r.Body.Y)
 	//...特效框
 }
 
