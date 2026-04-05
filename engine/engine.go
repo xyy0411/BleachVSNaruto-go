@@ -58,7 +58,9 @@ func (e *Engine) Update() {
 	var animatables []animatable.Animatable
 	for _, actor := range e.actors {
 		actor.Update()
-		animatables = append(animatables, actor.GetRuntime())
+		rt := actor.GetRuntime()
+		rt.UpdataRect()
+		animatables = append(animatables, rt)
 	}
 
 	e.AnimationSystem.Update(animatables, e.Time.Delta)
