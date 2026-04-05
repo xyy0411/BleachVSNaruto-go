@@ -42,8 +42,14 @@ func (r *Rect) Bottom() float64 {
 }
 
 func (r *Rect) Intersects(other *Rect) bool {
-	return r.Left < other.Right() &&
-		r.Right() > other.Left &&
-		r.Top < other.Bottom() &&
-		r.Bottom() > other.Top
+	if !r.Action || !other.Action {
+		return false
+	}
+	if r.Right() < other.Left || other.Right() < r.Left {
+		return false
+	}
+	if r.Bottom() < other.Top || r.Top < other.Bottom() {
+		return false
+	}
+	return true
 }
