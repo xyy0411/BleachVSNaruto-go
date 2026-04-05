@@ -8,7 +8,9 @@ import (
 )
 
 type Runtime struct {
-	Body *models.PhysicsBody
+	Body       *models.PhysicsBody
+	BodyRect   *Rect //受击框
+	EffectRect *Rect //特效框
 
 	State state.State
 	// 朝左 -1 朝右 1
@@ -30,6 +32,16 @@ type Runtime struct {
 
 func (r *Runtime) AnimationPlayer() animatable.AnimationPlayer {
 	return &r.AnimPlayer
+}
+
+// UpdataRect 更新角色框与特效框
+func (r *Runtime) UpdataRect() {
+	if r.State == state.Fall {
+		r.BodyRect.Action = false
+	}
+	r.BodyRect.Left = r.Body.X
+	r.BodyRect.Top = r.Body.Y
+	//...特效框
 }
 
 type Events struct {

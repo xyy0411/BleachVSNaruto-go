@@ -9,6 +9,9 @@ const (
 	Jump                    // 空中
 	JustLanded              // 刚落地
 	Dash                    // 冲刺
+
+	//占位:倒地状态
+	Fall
 )
 
 var StateNameList = [...]string{"idle", "run", "jump_start", "jump", "just_landed", "dash"}

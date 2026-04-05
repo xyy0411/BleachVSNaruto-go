@@ -95,7 +95,10 @@ func (p *ImagePool) GetImage(key string, longTime ...bool) *ebiten.Image {
 func (p *ImagePool) DeleteImage(key string) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	delete(p.images, key)
+	if image, ok := p.images[key]; ok {
+		image.Meta.Deallocate()
+	 	delete(p.images, key)
+	}
 }
 
 // Clear 清空整个图池
