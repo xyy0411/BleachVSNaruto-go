@@ -27,16 +27,18 @@ import (
 )
 
 const (
-	logicalWidth  = 800
-	logicalHeight = 600
+	logicalWidth    = 800
+	logicalHeight   = 600
+	audioSampleRate = 44100
 )
 
 func main() {
 	config.InitLog()
 
 	e := engine.New(60)
-	audioCtx := audio.NewContext(11000)
+	audioCtx := audio.NewContext(audioSampleRate)
 	coreaudio.Init(audioCtx)
+	e.AudioSystem = coreaudio.Default
 
 	inputSys := &input.System{
 		Time:   e.Time,
