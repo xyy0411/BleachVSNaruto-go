@@ -11,7 +11,7 @@ const (
 )
 
 var (
-	// Name 是斩月地图的注册名。
+	// Name 是斩月地图的注册名
 	Name          = "zangetsu"
 	terrainuri    = "./assets/maps/zangetsu_haka/Symbol 8.png"
 	decorationuri = "./assets/maps/zangetsu_haka/10.png"

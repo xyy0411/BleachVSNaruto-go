@@ -6,24 +6,20 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
-	"github.com/xyy0411/bleachVSnaruto/global"
 )
 
-func LoadWavBytes(path string) []byte {
+func LoadWavBytes(path string, sampleRate int) ([]byte, error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
-		global.Logger.Fatal(err)
+		return nil, err
 	}
-	d, err := wav.DecodeWithoutResampling(bytes.NewReader(b))
+	d, err := wav.DecodeWithSampleRate(sampleRate, bytes.NewReader(b))
 	if err != nil {
-		global.Logger.Fatal(err)
+		return nil, err
 	}
 	var buf bytes.Buffer
 	_, err = buf.ReadFrom(d)
-	if err != nil {
-		global.Logger.Fatal(err)
-	}
-	return buf.Bytes()
+	return buf.Bytes(), err
 }
 
 func NewPlayer(ctx *audio.Context, data []byte, volume float64) *audio.Player {
