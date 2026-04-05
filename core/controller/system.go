@@ -33,6 +33,8 @@ func (s *System) Update() {
 	var intent models.Intent
 
 	switch {
+	case in.Left && in.Right:
+		intent.MoveX = 0
 	case in.Left:
 		intent.MoveX = -1
 	case in.Right:
@@ -40,6 +42,8 @@ func (s *System) Update() {
 	}
 
 	switch {
+	case in.Up && in.Down:
+		intent.MoveY = 0
 	case in.Up:
 		intent.MoveY = 1
 	case in.Down:

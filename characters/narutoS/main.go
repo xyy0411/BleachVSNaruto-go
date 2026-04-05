@@ -35,6 +35,7 @@ type NarutoS struct {
 
 	Runtime *charactor.Runtime
 	Data    *charactor.Data
+	
 }
 
 func init() {

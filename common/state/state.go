@@ -11,7 +11,9 @@ const (
 	Dash                    // 冲刺
 )
 
+var StateNameList = [...]string{"idle", "run", "jump_start", "jump", "just_landed", "dash"}
+
 // String 获取状态对应的字符串
-func String(s State) string {
-	return [...]string{"idle", "run", "jump_start", "jump", "just_landed", "dash"}[s]
+func (s State) String() string {
+	return StateNameList[s]
 }

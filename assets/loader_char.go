@@ -52,7 +52,7 @@ func BuildAnimationSetFromAtlas(roleID string, cfg *animatable.FullAnimationConf
 
 	byState := make(map[state.State]*animatable.ActionAnimation)
 	for _, st := range []state.State{state.Idle, state.Run, state.JumpStart, state.Jump, state.JustLanded, state.Dash} {
-		actionName := state.String(st)
+		actionName := st.String()
 		actionCfg, ok := cfg.Animations[actionName]
 		if !ok {
 			continue
