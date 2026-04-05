@@ -4,7 +4,6 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/characters"
 	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
-	"github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/charactor"
 	"github.com/xyy0411/bleachVSnaruto/models"
 )
@@ -84,11 +83,6 @@ func (r Rukia) Update() {
 		events.JumpStart = true
 	}
 	r.Runtime.Events = events
-	if events.JumpStart {
-		if path := r.Data.Audio.SFX[audio.EventJump]; path != "" && audio.Default != nil {
-			audio.Default.Play(path, r.Data.Audio.Volume)
-		}
-	}
 
 	jumpStartAnim := r.Data.Animations.ByState[state.JumpStart]
 	justLandedAnim := r.Data.Animations.ByState[state.JustLanded]

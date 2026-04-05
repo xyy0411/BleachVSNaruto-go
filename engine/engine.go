@@ -3,6 +3,7 @@ package engine
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
+	"github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/charactor"
 	"github.com/xyy0411/bleachVSnaruto/core/input"
 	"github.com/xyy0411/bleachVSnaruto/core/physics"
@@ -22,6 +23,7 @@ type Engine struct {
 	InputSystem     []*input.System
 	PhysicsSystem   *physics.System
 	AnimationSystem *animatable.System
+	AudioSystem     *audio.System
 }
 
 func New(TPS int) *Engine {
@@ -84,7 +86,36 @@ func (e *Engine) Update() {
 
 		targets = append(targets, rt.Body.X)
 	}
+	e.flushAudioEvents()
+
 	e.PhysicsSystem.World.FollowTargetsX(targets...)
+}
+
+func (e *Engine) flushAudioEvents() {
+	if e.AudioSystem == nil {
+		return
+	}
+	for _, actor := range e.actors {
+		runtime := actor.GetRuntime()
+		data := actor.GetData()
+		for _, event := range runtime.AudioEvents {
+			paths := data.Audio.SFX[event]
+			if len(paths) == 0 {
+				continue
+			}
+
+			if runtime.LastAudioVariant == nil {
+				runtime.LastAudioVariant = make(map[audio.Event]int)
+			}
+
+			index := runtime.LastAudioVariant[event]
+			path := paths[index%len(paths)]
+			runtime.LastAudioVariant[event] = (index + 1) % len(paths)
+
+			e.AudioSystem.Play(path, data.Audio.Volume)
+		}
+		runtime.AudioEvents = nil
+	}
 }
 
 func (e *Engine) Draw(screen *ebiten.Image) {

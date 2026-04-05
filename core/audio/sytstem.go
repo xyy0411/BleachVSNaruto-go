@@ -23,7 +23,8 @@ func (s *System) getBytes(path string) []byte {
 	if b, ok := s.Cache[path]; ok {
 		return b
 	}
-	b := assets.LoadWavBytes(path)
+	// 如果文件不存在的话那么就直接播放空的音效
+	b, _ := assets.LoadWavBytes(path, s.Ctx.SampleRate())
 	s.Cache[path] = b
 	return b
 }

@@ -2,6 +2,7 @@ package charactor
 
 import (
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
+	"github.com/xyy0411/bleachVSnaruto/core/audio"
 )
 
 type Character interface {
@@ -20,6 +21,6 @@ type Data struct {
 }
 
 type AudioConfig struct {
-	SFX    map[string]string // 事件名 -> 音频路径
+	SFX    map[audio.Event][]string // 音效事件 -> 音频路径
 	Volume float64
 }

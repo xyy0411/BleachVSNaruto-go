@@ -76,22 +76,22 @@ func New() charactor.Character {
 	}
 }
 
-// GetData 返回角色静态配置数据。
+// GetData 返回角色静态配置数据
 func (n *NarutoS) GetData() *charactor.Data {
 	return n.Data
 }
 
-// GetRuntime 返回角色运行时状态。
+// GetRuntime 返回角色运行时状态
 func (n *NarutoS) GetRuntime() *charactor.Runtime {
 	return n.Runtime
 }
 
-// GetID 返回角色唯一标识。
+// GetID 返回角色唯一标识
 func (n *NarutoS) GetID() string {
 	return n.id
 }
 
-// GetName 返回角色显示名称。
+// GetName 返回角色显示名称
 func (n *NarutoS) GetName() string {
 	return n.name
 }
@@ -107,12 +107,6 @@ func (n *NarutoS) Update() {
 		events.JumpStart = true
 	}
 	n.Runtime.Events = events
-
-	if events.JumpStart {
-		if path := n.Data.Audio.SFX[audio.EventJump]; path != "" && audio.Default != nil {
-			audio.Default.Play(path, n.Data.Audio.Volume)
-		}
-	}
 
 	jumpStartAnim := n.Data.Animations.ByState[state.JumpStart]
 	justLandedAnim := n.Data.Animations.ByState[state.JustLanded]
@@ -133,8 +127,10 @@ func (n *NarutoS) Update() {
 		n.Runtime.State = state.JumpStart
 	case events.JustLanded:
 		n.Runtime.State = state.JustLanded
+		n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventJustLanded)
 	case events.JumpStart:
 		n.Runtime.State = state.JumpStart
+		n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventJumpStart)
 	case body.Dashing:
 		n.Runtime.State = state.Dash
 	case body.OnGround:
@@ -145,6 +141,22 @@ func (n *NarutoS) Update() {
 		}
 	default:
 		n.Runtime.State = state.Jump
+	}
+
+	if !n.Runtime.PrevDashed && body.Dashing {
+		n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventDash)
+	}
+
+	// 处理跑步音效
+	// 这里暂时拿不到delta,反正tps是固定的那就直接硬算得了1/6秒循环播放一次
+	if body.OnGround && body.VX != 0 && n.Runtime.State == state.Run {
+		n.Runtime.RunStepTimer++
+		if n.Runtime.RunStepTimer >= 10 {
+			n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventRunStep)
+			n.Runtime.RunStepTimer = 0
+		}
+	} else {
+		n.Runtime.RunStepTimer = 0
 	}
 
 	lockMoveX := n.Runtime.State == state.JustLanded || n.Runtime.State == state.JumpStart
@@ -165,4 +177,6 @@ func (n *NarutoS) Update() {
 	n.Runtime.PrevOnGround = body.OnGround
 	n.Runtime.PrevVY = body.VY
 	n.Runtime.PrevJumpsUsed = body.JumpsUsed
+	n.Runtime.PrevDashed = body.Dashing
+
 }
