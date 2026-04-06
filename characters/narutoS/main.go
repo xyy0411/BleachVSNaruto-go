@@ -47,6 +47,7 @@ func New() charactor.Character {
 		X:            100,
 		Y:            500,
 		OnGround:     true,
+		State:        state.Idle,
 		DashDuration: 0.3,
 		MaxJumps:     2,
 	}
@@ -109,6 +110,8 @@ func (n *NarutoS) Update() {
 	}
 	n.Runtime.Events = events
 
+	attackActive := charactor.ResolveAttackState(n.Runtime, n.Data.Animations)
+
 	jumpStartAnim := n.Data.Animations.ByState[state.JumpStart]
 	justLandedAnim := n.Data.Animations.ByState[state.JustLanded]
 
@@ -122,6 +125,8 @@ func (n *NarutoS) Update() {
 		n.Runtime.AnimPlayer.Frame < int64(len(justLandedAnim.FramesKeys)-1)
 
 	switch {
+	case attackActive:
+		n.Runtime.State = n.Runtime.Body.State
 	case justLandedLocked:
 		n.Runtime.State = state.JustLanded
 	case jumpStartLocked:
@@ -160,7 +165,7 @@ func (n *NarutoS) Update() {
 		n.Runtime.RunStepTimer = 0
 	}
 
-	lockMoveX := n.Runtime.State == state.JustLanded || n.Runtime.State == state.JumpStart
+	lockMoveX := n.Runtime.State == state.JustLanded || n.Runtime.State == state.JumpStart || n.Runtime.State.IsAttack()
 	if lockMoveX {
 		body.X -= body.VX
 		body.VX = 0

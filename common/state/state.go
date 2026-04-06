@@ -1,5 +1,6 @@
 package state
 
+// State 表示角色当前的动作状态。
 type State int
 
 const (
@@ -58,4 +59,30 @@ var StateNameList = [...]string{
 // String 获取状态对应的字符串
 func (s State) String() string {
 	return StateNameList[s]
+}
+
+// IsAttack 返回当前状态是否为普通攻击连段状态。
+func (s State) IsAttack() bool {
+	switch s {
+	case J1, J2, J3, J4:
+		return true
+	default:
+		return false
+	}
+}
+
+// NextAttackState 返回普通攻击连段的下一段状态。
+func NextAttackState(current State) State {
+	switch current {
+	case J1:
+		return J2
+	case J2:
+		return J3
+	case J3:
+		return J4
+	case J4:
+		return J1
+	default:
+		return J1
+	}
 }

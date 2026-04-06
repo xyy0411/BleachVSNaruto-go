@@ -85,6 +85,8 @@ func (r Rukia) Update() {
 	}
 	r.Runtime.Events = events
 
+	attackActive := charactor.ResolveAttackState(r.Runtime, r.Data.Animations)
+
 	jumpStartAnim := r.Data.Animations.ByState[state.JumpStart]
 	justLandedAnim := r.Data.Animations.ByState[state.JustLanded]
 
@@ -98,6 +100,8 @@ func (r Rukia) Update() {
 		r.Runtime.AnimPlayer.Frame < int64(len(justLandedAnim.FramesKeys)-1)
 
 	switch {
+	case attackActive:
+		r.Runtime.State = r.Runtime.Body.State
 	case justLandedLocked:
 		r.Runtime.State = state.JustLanded
 	case jumpStartLocked:
@@ -118,7 +122,7 @@ func (r Rukia) Update() {
 		r.Runtime.State = state.Jump
 	}
 
-	lockMoveX := r.Runtime.State == state.JustLanded || r.Runtime.State == state.JumpStart
+	lockMoveX := r.Runtime.State == state.JustLanded || r.Runtime.State == state.JumpStart || r.Runtime.State.IsAttack()
 	if lockMoveX {
 		physicsBody.X -= physicsBody.VX
 		physicsBody.VX = 0

@@ -54,20 +54,11 @@ func (s *System) Update() {
 	intent.JumpPressed = in.Jump && !s.prevJump
 	intent.DashPressed = in.Dash && !s.prevDash
 
-	//ATK
+	//ATK star
 	if intent.AttackPressed {
 		intent.StatePressed = state.J1
+		s.Body.RegisterAttackInput()
 	}
-	// if s.prevAttack {
-	// 	switch s.prevState {
-	// 	case state.J1:
-	// 		intent.StatePressed = state.J2
-	// 	case state.J2:
-	// 		intent.StatePressed = state.J3
-	// 	case state.J3:
-	// 		intent.StatePressed = state.J1
-	// 	}
-	// }
 
 	// 刚落地
 	if !s.prevOnGround && s.prevVy == 0 {
@@ -94,5 +85,6 @@ func (s *System) Update() {
 	s.prevAttack = in.Attack
 	s.prevJump = in.Jump
 	s.prevDash = in.Dash
-	s.prevState = intent.StatePressed
+	s.prevOnGround = s.Body.OnGround
+	s.prevVy = s.Body.VY
 }

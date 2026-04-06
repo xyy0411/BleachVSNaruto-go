@@ -1,6 +1,7 @@
 package physics
 
 import (
+	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/core/controller"
 	gametime "github.com/xyy0411/bleachVSnaruto/core/time"
 	"github.com/xyy0411/bleachVSnaruto/core/world"
@@ -36,6 +37,15 @@ func (s *System) Update() {
 			body.MaxJumps = 1
 		}
 
+		if !body.State.IsAttack() && body.ConsumeAttackRequest() {
+			body.StartAttack(state.J1)
+		}
+
+		if body.State.IsAttack() {
+			body.Dashing = false
+			body.DashTimer = 0
+		}
+
 		if body.DashTimer > 0 {
 			body.DashTimer -= delta
 			if body.DashTimer <= 0 {
@@ -54,7 +64,7 @@ func (s *System) Update() {
 			body.DashDirection = -2*i + 1
 		}
 
-		if !body.Dashing && intent.DashPressed && body.OnGround {
+		if !body.State.IsAttack() && !body.Dashing && intent.DashPressed && body.OnGround {
 			body.Dashing = true
 			body.DashTimer = body.DashDuration
 			if intent.MoveX != 0 {
@@ -62,7 +72,9 @@ func (s *System) Update() {
 			}
 		}
 
-		if body.Dashing {
+		if body.State.IsAttack() {
+			body.VX = 0
+		} else if body.Dashing {
 			baseVX := (float64(body.DashDirection) * s.DashSpeed * s.MoveSpeed) / 2.0
 			if body.DashDuration > 0 {
 				progress := 1 - (body.DashTimer / body.DashDuration)
@@ -84,7 +96,7 @@ func (s *System) Update() {
 			body.VX = float64(intent.MoveX) * s.MoveSpeed
 		}
 
-		canJump := intent.JumpPressed && (body.OnGround || body.JumpsUsed < body.MaxJumps)
+		canJump := !body.State.IsAttack() && intent.JumpPressed && (body.OnGround || body.JumpsUsed < body.MaxJumps)
 		if canJump {
 			body.VY = -s.JumpSpeed
 			body.OnGround = false

@@ -45,7 +45,7 @@ func (r *Rect) Intersects(other *Rect) bool {
 	if r.Right() < other.X || other.Right() < r.X {
 		return false
 	}
-	if r.Bottom() < other.Y || r.Y < other.Bottom() {
+	if r.Bottom() < other.Y || other.Bottom() < r.Y {
 		return false
 	}
 	return true

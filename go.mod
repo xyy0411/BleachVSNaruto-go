@@ -5,7 +5,6 @@ go 1.25.1
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.9.7
 	github.com/sirupsen/logrus v1.9.3
-	golang.org/x/image v0.31.0
 )
 
 require (
@@ -13,11 +12,7 @@ require (
 	github.com/ebitengine/hideconsole v1.0.0 // indirect
 	github.com/ebitengine/oto/v3 v3.4.0 // indirect
 	github.com/ebitengine/purego v0.9.1 // indirect
-	github.com/icza/bitio v1.1.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
-	github.com/ulikunitz/xz v0.5.15 // indirect
-	github.com/x448/float16 v0.8.4 // indirect
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
 )
