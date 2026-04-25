@@ -1,6 +1,8 @@
 package audio
 
 import (
+	"time"
+
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/xyy0411/bleachVSnaruto/assets"
 )
@@ -31,6 +33,24 @@ func (s *System) getBytes(path string) []byte {
 
 func (s *System) Play(path string, volume float64) {
 	b := s.getBytes(path)
+	if len(b) == 0 {
+		return
+	}
 	p := assets.NewPlayer(s.Ctx, b, volume)
 	p.Play()
+	go closePlayerWhenFinished(p)
+}
+
+// closePlayerWhenFinished 等待一次性音效播放结束后主动释放底层资源
+func closePlayerWhenFinished(p *audio.Player) {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		if p.IsPlaying() {
+			continue
+		}
+		_ = p.Close()
+		return
+	}
 }
