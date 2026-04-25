@@ -36,8 +36,9 @@ func NewImagePool() *ImagePool {
 		images:      make(map[string]*Image),
 	}
 	go func(p *ImagePool) {
-		for {
-			time.Sleep(p.CleanupTick)
+		ticker := time.NewTicker(p.CleanupTick)
+		defer ticker.Stop()
+		for range ticker.C {
 			p.CleanUp()
 		}
 	}(pool)
@@ -100,23 +101,29 @@ func (p *ImagePool) DeleteImage(key string) {
 
 // Clear 清空整个图池
 func (p *ImagePool) Clear() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	p.images = make(map[string]*Image)
 }
 
 // Size 返回图池中图像的数量
 func (p *ImagePool) Size() int {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
 	return len(p.images)
 }
 
 // CleanUp 清理过期图片
 func (p *ImagePool) CleanUp() {
-	expirytime := time.Now().Add(-p.CleanupTick)
+	expirytime := time.Now().Add(-p.DefaultTTL)
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	for key, elem := range p.images {
 		if elem.LongTime {
 			continue
 		}
 		if expirytime.After(elem.LastUsed) {
-			p.DeleteImage(key)
+			delete(p.images, key)
 		}
 	}
 }
