@@ -1,16 +1,16 @@
 package physics
 
 import (
-	"github.com/xyy0411/bleachVSnaruto/core/controller"
+	"github.com/xyy0411/bleachVSnaruto/core/charactor"
 	gametime "github.com/xyy0411/bleachVSnaruto/core/time"
 	"github.com/xyy0411/bleachVSnaruto/core/world"
 )
 
-// System 负责更新角色的基础物理状态
+// System 负责更新受控角色的基础物理状态
 type System struct {
-	Controller []*controller.System
-	World      *world.World
-	Time       *gametime.Time
+	Runtimes []*charactor.Runtime
+	World    *world.World
+	Time     *gametime.Time
 
 	Gravity   float64
 	MoveSpeed float64
@@ -18,20 +18,21 @@ type System struct {
 	DashSpeed float64
 }
 
-// Name ...
+// Name 返回系统名称
 func (s *System) Name() string {
 	return "physics"
 }
 
 // Update 推进所有受控角色的物理状态
 func (s *System) Update() {
-	for i, player := range s.Controller {
-		intent := player.Current
-		delta := s.Time.Delta
-		body := player.Body
-		if body == nil {
+	for i, runtime := range s.Runtimes {
+		if runtime == nil || runtime.Body == nil {
 			continue
 		}
+
+		intent := runtime.Intent
+		delta := s.Time.Delta
+		body := runtime.Body
 		if body.MaxJumps <= 0 {
 			body.MaxJumps = 1
 		}

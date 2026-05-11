@@ -69,13 +69,12 @@ func main() {
 	}).UpdateMapInfo()
 
 	physicsSys := &physics.System{
-		Controller: []*controller.System{controllerSys, controllerSys2},
-		World:      w,
-		Time:       e.Time,
-		Gravity:    0.8,
-		MoveSpeed:  5,
-		JumpSpeed:  17,
-		DashSpeed:  8,
+		World:     w,
+		Time:      e.Time,
+		Gravity:   0.8,
+		MoveSpeed: 5,
+		JumpSpeed: 17,
+		DashSpeed: 8,
 	}
 
 	e.InputSystem = append(e.InputSystem, inputSys, inputSys2)
@@ -89,7 +88,8 @@ func main() {
 	rt := player.GetRuntime()
 	rt.Body.Y = w.GroundY
 	rt.Body.OnGround = true
-	controllerSys.Body = rt.Body
+	controllerSys.Runtime = rt
+	physicsSys.Runtimes = append(physicsSys.Runtimes, rt)
 	e.RegisterActor(player)
 
 	player2 := characters.SelectChar("rukia")()
@@ -98,7 +98,8 @@ func main() {
 	rt2.Body.OnGround = true
 	rt2.Body.X = 550
 	rt2.Facing = -1
-	controllerSys2.Body = rt2.Body
+	controllerSys2.Runtime = rt2
+	physicsSys.Runtimes = append(physicsSys.Runtimes, rt2)
 
 	e.RegisterActor(player2)
 	g := game.Game{Engine: e}

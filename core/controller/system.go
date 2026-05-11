@@ -1,42 +1,43 @@
 package controller
 
 import (
-	"github.com/xyy0411/bleachVSnaruto/common/state"
+	"github.com/xyy0411/bleachVSnaruto/core/charactor"
 	"github.com/xyy0411/bleachVSnaruto/core/input"
-	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
+// System 负责将输入帧转换为角色运行时可消费的行为意图
 type System struct {
 	Input *input.System
-	// 本帧意图（供后续系统读取）
-	Current models.Intent
-	// 绑定的角色,控制器与角色绑定简化物理系统
-	Body *models.PhysicsBody
+	// Runtime 指向当前控制器绑定的角色运行时数据
+	Runtime *charactor.Runtime
 
-	// 用于检测 JustPressed
-	prevAttack   bool
-	prevJump     bool
-	prevDash     bool
-	prevOnGround bool
-	prevVy       float64
-	prevState    state.State
+	// prevAttack prevJump prevDash 用于检测 JustPressed 输入边沿
+	prevAttack bool
+	prevJump   bool
+	prevDash   bool
 }
 
+// Name 返回系统名称
 func (s *System) Name() string {
 	return "controller"
 }
 
-// Update 字段s.Current在此方法里已经代表为上一帧发生的事件了
+// Update 根据输入状态更新当前帧的角色行为意图
 func (s *System) Update() {
-	// 获取本帧发生的事件
+	if s.Input == nil || s.Runtime == nil {
+		return
+	}
+
 	in := s.Input.Current
-	var intent models.Intent
+	intent := s.Runtime.Intent
 
 	switch {
 	case in.Left:
 		intent.MoveX = -1
 	case in.Right:
 		intent.MoveX = 1
+	default:
+		intent.MoveX = 0
 	}
 
 	switch {
@@ -44,34 +45,16 @@ func (s *System) Update() {
 		intent.MoveY = 1
 	case in.Down:
 		intent.MoveY = -1
+	default:
+		intent.MoveY = 0
 	}
 
 	intent.AttackPressed = in.Attack && !s.prevAttack
 	intent.JumpPressed = in.Jump && !s.prevJump
 	intent.DashPressed = in.Dash && !s.prevDash
-
-	// 刚落地
-	if !s.prevOnGround && s.prevVy == 0 {
-		intent.StatePressed = state.JustLanded
-	}
-
-	// 刚开始跳
-	if s.prevOnGround && s.prevVy < 0 {
-		intent.StatePressed = state.JumpStart
-	}
-
-	if intent.JumpPressed && s.prevState != state.Jump {
-		intent.StatePressed = state.Jump
-	}
-
-	if intent.DashPressed && s.prevState != state.Dash {
-		intent.StatePressed = state.Dash
-	}
-
 	intent.DashHeld = in.Dash
 
-	s.Current = intent
-
+	s.Runtime.Intent = intent
 	s.prevAttack = in.Attack
 	s.prevJump = in.Jump
 	s.prevDash = in.Dash
