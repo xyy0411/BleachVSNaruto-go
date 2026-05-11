@@ -26,6 +26,7 @@ type Engine struct {
 	AudioSystem     *audio.System
 }
 
+// New ...
 func New(TPS int) *Engine {
 	ebiten.SetTPS(TPS)
 	return &Engine{
@@ -33,6 +34,16 @@ func New(TPS int) *Engine {
 		InputSystem:     []*input.System{},
 		AnimationSystem: &animatable.System{},
 	}
+}
+
+// ActorCount 返回当前已注册的角色数量
+func (e *Engine) ActorCount() int {
+	return len(e.actors)
+}
+
+// Actors 返回当前已注册的角色列表
+func (e *Engine) Actors() []charactor.Character {
+	return e.actors
 }
 
 func (e *Engine) RegisterSystem(s System) {
