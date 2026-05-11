@@ -5,6 +5,7 @@ import (
 
 	"github.com/xyy0411/bleachVSnaruto/characters"
 	"github.com/xyy0411/bleachVSnaruto/config"
+	"github.com/xyy0411/bleachVSnaruto/debugview"
 	"github.com/xyy0411/bleachVSnaruto/game_map"
 
 	coreaudio "github.com/xyy0411/bleachVSnaruto/core/audio"
@@ -22,6 +23,7 @@ import (
 	//初始化角色
 	_ "github.com/xyy0411/bleachVSnaruto/characters/narutoS"
 	_ "github.com/xyy0411/bleachVSnaruto/characters/rukia"
+
 	//初始化地图
 	_ "github.com/xyy0411/bleachVSnaruto/game_map/zangetsu"
 )
@@ -101,7 +103,10 @@ func main() {
 	controllerSys2.Body = rt2.Body
 
 	e.RegisterActor(player2)
-	g := game.Game{Engine: e}
+	g := game.Game{
+		Engine: e,
+		Debug:  &debugview.Panel{Visible: true},
+	}
 	ebiten.SetWindowSize(logicalWidth, logicalHeight)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowTitle("死神VS火影 demo")

@@ -31,7 +31,7 @@ type Rect struct {
 	H int `json:"h"`
 }
 
-// Point 表示二维坐标点
+// Point 二维坐标点
 type Point struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`
