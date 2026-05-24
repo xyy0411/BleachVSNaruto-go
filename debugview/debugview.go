@@ -63,7 +63,7 @@ func (p *Panel) Draw(screen *ebiten.Image, e *engine.Engine) {
 			"角色%d %s 状态=%s 位置=(%.1f, %.1f) 速度=(%.1f, %.1f) 动画帧=%d",
 			i+1,
 			actor.GetName(),
-			state.String(rt.State),
+			state.ToString(rt.State),
 			rt.Body.X,
 			rt.Body.Y,
 			rt.Body.VX,

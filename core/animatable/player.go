@@ -80,7 +80,7 @@ func (p *Player) Update(delta float64) {
 	}
 }
 
-// CurrentFrame 返回当前帧的图像。
+// CurrentFrame 返回当前帧的图像
 func (p *Player) CurrentFrame() *ebiten.Image {
 	if p.Current == nil || len(p.Current.FramesKeys) == 0 {
 		return nil
@@ -88,7 +88,7 @@ func (p *Player) CurrentFrame() *ebiten.Image {
 	return frameImageResolver(p.Current.FramesKeys[p.Frame])
 }
 
-// CurrentFrameMeta 返回当前帧的元数据。
+// CurrentFrameMeta 返回当前帧的元数据
 func (p *Player) CurrentFrameMeta() *AnimationFrame {
 	if p.Current == nil || len(p.Current.Frames) == 0 {
 		return nil

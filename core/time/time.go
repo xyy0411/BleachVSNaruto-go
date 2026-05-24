@@ -10,7 +10,7 @@ func (t *Time) Tick() {
 	t.GlobalFrame++
 }
 
-func (t *Time) UpdataTPS(TPS float64) *Time {
+func (t *Time) UpdateTPS(TPS float64) *Time {
 	t.TPS = TPS
 	t.Delta = 1.0 / TPS
 	return t

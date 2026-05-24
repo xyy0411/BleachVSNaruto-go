@@ -18,10 +18,10 @@ type InputFrame struct {
 	Down  bool
 
 	// 动作
-	Attack     bool
-	Dash       bool
-	Jump       bool
-	LangAtk    bool //远攻
-	Outbreak   bool //爆发
-	Assistance bool //援助
+	Attack     bool // J
+	Dash       bool // L
+	Jump       bool // K
+	LangAtk    bool // U
+	Outbreak   bool // I
+	Assistance bool // O
 }

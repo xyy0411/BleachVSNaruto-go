@@ -6,7 +6,7 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/core/world"
 )
 
-// System 负责更新受控角色的基础物理状态
+// System 更新受控角色的基础物理状态
 type System struct {
 	Runtimes []*charactor.Runtime
 	World    *world.World
@@ -18,7 +18,7 @@ type System struct {
 	DashSpeed float64
 }
 
-// Name 返回系统名称
+// Name ...
 func (s *System) Name() string {
 	return "physics"
 }
@@ -37,6 +37,7 @@ func (s *System) Update() {
 			body.MaxJumps = 1
 		}
 
+		// 判断冲刺动画是否结束
 		if body.DashTimer > 0 {
 			body.DashTimer -= delta
 			if body.DashTimer <= 0 {
@@ -55,6 +56,7 @@ func (s *System) Update() {
 			body.DashDirection = -2*i + 1
 		}
 
+		// 初判断是否可以进入冲刺状态
 		if !body.Dashing && intent.DashPressed && body.OnGround {
 			body.Dashing = true
 			body.DashTimer = body.DashDuration
@@ -63,6 +65,7 @@ func (s *System) Update() {
 			}
 		}
 
+		// 处理冲刺速度
 		if body.Dashing {
 			baseVX := (float64(body.DashDirection) * s.DashSpeed * s.MoveSpeed) / 2.0
 			if body.DashDuration > 0 {
