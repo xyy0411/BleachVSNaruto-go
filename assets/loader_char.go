@@ -12,6 +12,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
+	"github.com/xyy0411/bleachVSnaruto/global"
 )
 
 const defaultAnimationFPS = 10
@@ -51,7 +52,7 @@ func BuildAnimationSetFromAtlas(roleID string, cfg *animatable.FullAnimationConf
 	}
 
 	byState := make(map[state.State]*animatable.ActionAnimation)
-	for _, st := range []state.State{state.Idle, state.Run, state.JumpStart, state.Jump, state.JustLanded, state.Dash} {
+	for _, st := range state.GetAll() {
 		actionName := state.String(st)
 		actionCfg, ok := cfg.Animations[actionName]
 		if !ok {
@@ -69,6 +70,7 @@ func BuildAnimationSetFromAtlas(roleID string, cfg *animatable.FullAnimationConf
 			FPS:        resolveAnimationFPS(actionName, fpsByAction),
 			Loop:       resolveAnimationLoop(actionName, actionCfg.Loop, loopByAction),
 		}
+		global.Logger.Infof("已加载%s动作", actionName)
 	}
 
 	return animatable.Set{ByState: byState}, nil

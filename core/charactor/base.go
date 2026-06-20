@@ -80,25 +80,32 @@ func (b *BaseCharacter) UpdateEvents() {
 // HandleSpecialActions 处理特殊动作
 // 例如：飞行物、特殊技能等
 func (b *BaseCharacter) HandleSpecialActions() {
-	// 默认实现：什么都不做
-	// 角色可以重写此方法来处理特殊动作
+	// 处理技能动画帧 origin 变化导致的位移
+	if b.isSkillState() {
+		anim := b.Data.Animations.ByState[b.Runtime.State]
+		if anim != nil && b.Runtime.AnimPlayer.Frame < int64(len(anim.Frames)) {
+			frame := anim.Frames[b.Runtime.AnimPlayer.Frame]
+			body := b.Runtime.Body
+			// 计算当前帧与上一帧 origin.x 的差值
+			deltaX := frame.Origin.X - b.Runtime.PrevOriginX
+			// 根据角色朝向应用位移
+			body.X += deltaX * float64(b.Runtime.Facing)
+			// 记录当前帧的 origin.x
+			b.Runtime.PrevOriginX = frame.Origin.X
+		}
+	} else {
+		// 非技能状态时重置 PrevOriginX
+		b.Runtime.PrevOriginX = 0
+	}
 }
 
 // HandleStateTransition 处理状态转换
 func (b *BaseCharacter) HandleStateTransition() {
 	body := b.Runtime.Body
 
-	jumpStartAnim := b.Data.Animations.ByState[state.JumpStart]
-	justLandedAnim := b.Data.Animations.ByState[state.JustLanded]
-
-	jumpStartLocked := jumpStartAnim != nil &&
-		!jumpStartAnim.Loop &&
-		b.Runtime.AnimPlayer.Current == jumpStartAnim &&
-		b.Runtime.AnimPlayer.Frame < int64(len(jumpStartAnim.FramesKeys)-1)
-	justLandedLocked := justLandedAnim != nil &&
-		!justLandedAnim.Loop &&
-		b.Runtime.AnimPlayer.Current == justLandedAnim &&
-		b.Runtime.AnimPlayer.Frame < int64(len(justLandedAnim.FramesKeys)-1)
+	jumpStartLocked := b.isAnimLocked(state.JumpStart)
+	justLandedLocked := b.isAnimLocked(state.JustLanded)
+	skillAnimLocked := b.isSkillAnimLocked()
 
 	switch {
 	case justLandedLocked:
@@ -109,6 +116,10 @@ func (b *BaseCharacter) HandleStateTransition() {
 		b.Runtime.State = state.JustLanded
 	case b.Runtime.Events.JumpStart:
 		b.Runtime.State = state.JumpStart
+	case skillAnimLocked:
+		b.Runtime.Intent.ComboCommand = ""
+	case b.Runtime.Intent.ComboCommand != "":
+		b.transitionByCombo()
 	case body.Dashing:
 		b.Runtime.State = state.Dash
 	case body.OnGround:
@@ -120,6 +131,46 @@ func (b *BaseCharacter) HandleStateTransition() {
 	default:
 		b.Runtime.State = state.Jump
 	}
+}
+
+// isAnimLocked 检查指定状态的动画是否正在播放且未结束
+func (b *BaseCharacter) isAnimLocked(s state.State) bool {
+	anim := b.Data.Animations.ByState[s]
+	if anim == nil {
+		return false
+	}
+	return !anim.Loop &&
+		b.Runtime.AnimPlayer.Current == anim &&
+		b.Runtime.AnimPlayer.Frame < int64(len(anim.FramesKeys)-1)
+}
+
+// isSkillAnimLocked 检查是否有技能动画正在播放且未结束
+func (b *BaseCharacter) isSkillAnimLocked() bool {
+	for _, s := range state.GetSkill() {
+		if b.isAnimLocked(s) {
+			return true
+		}
+	}
+	return false
+}
+
+// transitionByCombo 根据 ComboCommand 进行状态转换
+func (b *BaseCharacter) transitionByCombo() {
+	cmd := b.Runtime.Intent.ComboCommand
+
+	stateMap := map[string]state.State{
+		"wj": state.WJ, "sj": state.SJ, "kj": state.KJ,
+		"wu": state.WU, "su": state.SU, "ku": state.KU,
+		"wi": state.WI, "si": state.SI, "ki": state.KI,
+		"i": state.NormalI,
+	}
+
+	if s, ok := stateMap[cmd]; ok {
+		if b.Data.Animations.ByState[s] != nil {
+			b.Runtime.State = s
+		}
+	}
+	b.Runtime.Intent.ComboCommand = ""
 }
 
 // HandleAudioEvents 处理音频事件
@@ -156,11 +207,30 @@ func (b *BaseCharacter) HandleAudioEvents() {
 // HandleMovementLock 处理移动锁定
 func (b *BaseCharacter) HandleMovementLock() {
 	body := b.Runtime.Body
+
+	// 技能状态时锁定移动
+	if b.isSkillState() {
+		body.X -= body.VX
+		body.VX = 0
+		return
+	}
+
+	// 落地和跳跃起手时锁定移动
 	lockMoveX := b.Runtime.State == state.JustLanded || b.Runtime.State == state.JumpStart
 	if lockMoveX {
 		body.X -= body.VX
 		body.VX = 0
 	}
+}
+
+// isSkillState 检查当前是否处于技能状态
+func (b *BaseCharacter) isSkillState() bool {
+	for _, s := range state.GetSkill() {
+		if b.Runtime.State == s {
+			return true
+		}
+	}
+	return false
 }
 
 // HandleFacing 处理朝向

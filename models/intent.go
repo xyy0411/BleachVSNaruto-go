@@ -13,4 +13,5 @@ type Intent struct {
 	DashPressed   bool
 	DashHeld      bool
 	StatePressed  state.State
+	ComboCommand  string
 }

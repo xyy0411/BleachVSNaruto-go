@@ -1,4 +1,4 @@
-﻿{
+{
   "meta": {
     "name": "narutoS",
     "texture": "assets/narutoS/texture_atlas.png"
@@ -4085,7 +4085,7 @@
       ],
       "loop": false
     },
-    "KI": {
+    "ki": {
       "start": 827,
       "end": 928,
       "frames": [
@@ -6049,7 +6049,7 @@
       ],
       "loop": false
     },
-    "KJ": {
+    "kj": {
       "start": 85,
       "end": 96,
       "frames": [
@@ -6212,7 +6212,7 @@
       ],
       "loop": false
     },
-    "KU": {
+    "ku": {
       "start": 97,
       "end": 110,
       "frames": [
@@ -8601,7 +8601,7 @@
       ],
       "loop": false
     },
-    "SJ": {
+    "sj": {
       "start": 258,
       "end": 313,
       "frames": [
@@ -9460,7 +9460,7 @@
         }
       ]
     },
-    "SU": {
+    "su": {
       "start": 414,
       "end": 433,
       "frames": [
@@ -13150,7 +13150,7 @@
       ],
       "loop": false
     },
-    "WJ": {
+    "wj": {
       "start": 314,
       "end": 350,
       "frames": [
@@ -13638,7 +13638,7 @@
       ],
       "loop": false
     },
-    "WU": {
+    "wu": {
       "start": 548,
       "end": 580,
       "frames": [
