@@ -27,8 +27,7 @@ type Runtime struct {
 	// LastAudioVariant 记录每类音效上次播放到的片段索引
 	LastAudioVariant map[audio.Event]int
 
-	AnimPlayer  animatable.Player
-	AudioEvents []audio.Event
+	AnimPlayer animatable.Player
 }
 
 // AnimationPlayer 返回角色当前使用的动画播放器

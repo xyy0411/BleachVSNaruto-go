@@ -5,6 +5,7 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/common/state"
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
 	"github.com/xyy0411/bleachVSnaruto/core/charactor"
+	"github.com/xyy0411/bleachVSnaruto/core/event"
 	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
@@ -15,11 +16,11 @@ func init() {
 }
 
 type Rukia struct {
-	id   string
-	name string
-
-	Runtime *charactor.Runtime
-	Data    *charactor.Data
+	id       string
+	name     string
+	Runtime  *charactor.Runtime
+	Data     *charactor.Data
+	EventBus *event.Bus
 }
 
 func New() charactor.Character {
@@ -71,6 +72,10 @@ func (r Rukia) GetID() string {
 
 func (r Rukia) GetName() string {
 	return r.name
+}
+
+func (r *Rukia) SetEventBus(bus *event.Bus) {
+	r.EventBus = bus
 }
 
 func (r Rukia) Update() {

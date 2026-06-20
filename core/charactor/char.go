@@ -3,6 +3,7 @@ package charactor
 import (
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
 	"github.com/xyy0411/bleachVSnaruto/core/audio"
+	"github.com/xyy0411/bleachVSnaruto/core/event"
 )
 
 type Character interface {
@@ -11,6 +12,7 @@ type Character interface {
 	GetID() string
 	GetName() string
 	GetData() *Data
+	SetEventBus(bus *event.Bus)
 }
 
 type Data struct {

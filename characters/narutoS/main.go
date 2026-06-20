@@ -6,6 +6,7 @@ import (
 	"github.com/xyy0411/bleachVSnaruto/core/animatable"
 	"github.com/xyy0411/bleachVSnaruto/core/audio"
 	"github.com/xyy0411/bleachVSnaruto/core/charactor"
+	"github.com/xyy0411/bleachVSnaruto/core/event"
 	"github.com/xyy0411/bleachVSnaruto/models"
 )
 
@@ -30,11 +31,11 @@ var (
 
 // NarutoS 表示使用 atlas 动画配置驱动的鸣人角色
 type NarutoS struct {
-	id   string
-	name string
-
-	Runtime *charactor.Runtime
-	Data    *charactor.Data
+	id       string
+	name     string
+	Runtime  *charactor.Runtime
+	Data     *charactor.Data
+	EventBus *event.Bus
 }
 
 func init() {
@@ -96,6 +97,18 @@ func (n *NarutoS) GetName() string {
 	return n.name
 }
 
+// SetEventBus 设置事件总线
+func (n *NarutoS) SetEventBus(bus *event.Bus) {
+	n.EventBus = bus
+}
+
+// publishAudio 安全地发布音频事件
+func (n *NarutoS) publishAudio(audioEvent audio.Event) {
+	if n.EventBus != nil {
+		n.EventBus.PublishAudio(n.id, audioEvent)
+	}
+}
+
 // Update 根据角色状态推进动画和事件。
 func (n *NarutoS) Update() {
 	body := n.Runtime.Body
@@ -127,10 +140,10 @@ func (n *NarutoS) Update() {
 		n.Runtime.State = state.JumpStart
 	case events.JustLanded:
 		n.Runtime.State = state.JustLanded
-		n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventJustLanded)
+		n.publishAudio(audio.EventJustLanded)
 	case events.JumpStart:
 		n.Runtime.State = state.JumpStart
-		n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventJumpStart)
+		n.publishAudio(audio.EventJumpStart)
 	case body.Dashing:
 		n.Runtime.State = state.Dash
 	case body.OnGround:
@@ -144,7 +157,7 @@ func (n *NarutoS) Update() {
 	}
 
 	if !n.Runtime.PrevDashed && body.Dashing {
-		n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventDash)
+		n.publishAudio(audio.EventDash)
 	}
 
 	// 处理跑步音效
@@ -152,7 +165,7 @@ func (n *NarutoS) Update() {
 	if body.OnGround && body.VX != 0 && n.Runtime.State == state.Run {
 		n.Runtime.RunStepTimer++
 		if n.Runtime.RunStepTimer >= 10 {
-			n.Runtime.AudioEvents = append(n.Runtime.AudioEvents, audio.EventRunStep)
+			n.publishAudio(audio.EventRunStep)
 			n.Runtime.RunStepTimer = 0
 		}
 	} else {
