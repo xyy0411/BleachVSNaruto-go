@@ -53,36 +53,19 @@ func (b *BaseCharacter) publishAudio(audioEvent audio.Event) {
 // Update 使用模板方法模式，定义更新流程的骨架
 // 角色可以重写特定步骤来实现个性化逻辑
 func (b *BaseCharacter) Update() {
-	// 步骤1：更新事件
-	b.updateEvents()
-
-	// 步骤2：处理特殊动作（钩子方法，角色可以重写）
-	b.handleSpecialActions()
-
-	// 步骤3：状态转换
-	b.handleStateTransition()
-
-	// 步骤4：处理音频事件
-	b.handleAudioEvents()
-
-	// 步骤5：处理移动锁定
-	b.handleMovementLock()
-
-	// 步骤6：处理朝向
-	b.handleFacing()
-
-	// 步骤7：播放动画
-	b.playAnimation()
-
-	// 步骤8：保存前一帧状态
-	b.savePrevState()
-
-	// 步骤9：更新后的处理（钩子方法，角色可以重写）
-	b.handlePostUpdate()
+	b.UpdateEvents()
+	b.HandleSpecialActions()
+	b.HandleStateTransition()
+	b.HandleAudioEvents()
+	b.HandleMovementLock()
+	b.HandleFacing()
+	b.PlayAnimation()
+	b.SavePrevState()
+	b.HandlePostUpdate()
 }
 
-// updateEvents 更新角色事件（可重写）
-func (b *BaseCharacter) updateEvents() {
+// UpdateEvents 更新角色事件
+func (b *BaseCharacter) UpdateEvents() {
 	body := b.Runtime.Body
 	events := Events{}
 	if !b.Runtime.PrevOnGround && body.OnGround && b.Runtime.PrevVY > 0 {
@@ -94,15 +77,15 @@ func (b *BaseCharacter) updateEvents() {
 	b.Runtime.Events = events
 }
 
-// handleSpecialActions 处理特殊动作（钩子方法，角色可以重写）
+// HandleSpecialActions 处理特殊动作
 // 例如：飞行物、特殊技能等
-func (b *BaseCharacter) handleSpecialActions() {
+func (b *BaseCharacter) HandleSpecialActions() {
 	// 默认实现：什么都不做
 	// 角色可以重写此方法来处理特殊动作
 }
 
-// handleStateTransition 处理状态转换（可重写）
-func (b *BaseCharacter) handleStateTransition() {
+// HandleStateTransition 处理状态转换
+func (b *BaseCharacter) HandleStateTransition() {
 	body := b.Runtime.Body
 
 	jumpStartAnim := b.Data.Animations.ByState[state.JumpStart]
@@ -139,26 +122,26 @@ func (b *BaseCharacter) handleStateTransition() {
 	}
 }
 
-// handleAudioEvents 处理音频事件（可重写）
-func (b *BaseCharacter) handleAudioEvents() {
+// HandleAudioEvents 处理音频事件
+func (b *BaseCharacter) HandleAudioEvents() {
 	body := b.Runtime.Body
 
-	// 处理落地音效
+	// 落地音效
 	if b.Runtime.Events.JustLanded {
 		b.publishAudio(audio.EventJustLanded)
 	}
 
-	// 处理跳跃音效
+	// 跳跃音效
 	if b.Runtime.Events.JumpStart {
 		b.publishAudio(audio.EventJumpStart)
 	}
 
-	// 处理冲刺音效
+	// 冲刺音效
 	if !b.Runtime.PrevDashed && body.Dashing {
 		b.publishAudio(audio.EventDash)
 	}
 
-	// 处理跑步音效
+	// 跑步音效
 	if body.OnGround && body.VX != 0 && b.Runtime.State == state.Run {
 		b.Runtime.RunStepTimer++
 		if b.Runtime.RunStepTimer >= 10 {
@@ -170,8 +153,8 @@ func (b *BaseCharacter) handleAudioEvents() {
 	}
 }
 
-// handleMovementLock 处理移动锁定（可重写）
-func (b *BaseCharacter) handleMovementLock() {
+// HandleMovementLock 处理移动锁定
+func (b *BaseCharacter) HandleMovementLock() {
 	body := b.Runtime.Body
 	lockMoveX := b.Runtime.State == state.JustLanded || b.Runtime.State == state.JumpStart
 	if lockMoveX {
@@ -180,8 +163,8 @@ func (b *BaseCharacter) handleMovementLock() {
 	}
 }
 
-// handleFacing 处理朝向（可重写）
-func (b *BaseCharacter) handleFacing() {
+// HandleFacing 处理朝向
+func (b *BaseCharacter) HandleFacing() {
 	body := b.Runtime.Body
 	lockMoveX := b.Runtime.State == state.JustLanded || b.Runtime.State == state.JumpStart
 
@@ -194,13 +177,13 @@ func (b *BaseCharacter) handleFacing() {
 	}
 }
 
-// playAnimation 播放动画（可重写）
-func (b *BaseCharacter) playAnimation() {
+// PlayAnimation 播放动画
+func (b *BaseCharacter) PlayAnimation() {
 	b.Runtime.AnimPlayer.Play(b.Data.Animations.ByState[b.Runtime.State])
 }
 
-// savePrevState 保存前一帧状态（可重写）
-func (b *BaseCharacter) savePrevState() {
+// SavePrevState 保存前一帧状态
+func (b *BaseCharacter) SavePrevState() {
 	body := b.Runtime.Body
 	b.Runtime.PrevOnGround = body.OnGround
 	b.Runtime.PrevVY = body.VY
@@ -208,9 +191,9 @@ func (b *BaseCharacter) savePrevState() {
 	b.Runtime.PrevDashed = body.Dashing
 }
 
-// handlePostUpdate 更新后的处理（钩子方法，角色可以重写）
+// HandlePostUpdate 更新后的处理
 // 例如：更新飞行物位置、处理特殊技能冷却等
-func (b *BaseCharacter) handlePostUpdate() {
+func (b *BaseCharacter) HandlePostUpdate() {
 	// 默认实现：什么都不做
 	// 角色可以重写此方法来处理更新后的逻辑
 }
