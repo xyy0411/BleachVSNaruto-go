@@ -22,13 +22,15 @@ type Runtime struct {
 	PrevDashed    bool
 	Events        Events
 
+	// PrevOriginX 记录上一帧动画的 origin.x，用于计算技能位移
+	PrevOriginX float64
+
 	// RunStepTimer 控制跑步音效的触发节奏
 	RunStepTimer float64
 	// LastAudioVariant 记录每类音效上次播放到的片段索引
 	LastAudioVariant map[audio.Event]int
 
-	AnimPlayer  animatable.Player
-	AudioEvents []audio.Event
+	AnimPlayer animatable.Player
 }
 
 // AnimationPlayer 返回角色当前使用的动画播放器

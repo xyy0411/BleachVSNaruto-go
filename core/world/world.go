@@ -1,7 +1,9 @@
 package world
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/xyy0411/bleachVSnaruto/assets"
+	"github.com/xyy0411/bleachVSnaruto/core/charactor"
 	"github.com/xyy0411/bleachVSnaruto/game_map"
 )
 
@@ -86,4 +88,66 @@ func (w *World) BGM(uri string) *World {
 		w.MapInfo.BGM = uri
 	}
 	return w
+}
+
+// CameraParams 返回摄像机的当前参数（X位置和缩放倍率）
+func (w *World) CameraParams() (cameraX float64, cameraZoom float64) {
+	if w.Camera == nil {
+		return 0, 1
+	}
+	return w.Camera.X, w.Camera.Scale()
+}
+
+// Draw 绘制世界场景（地面和角色）
+func (w *World) Draw(screen *ebiten.Image, actors []charactor.Character) {
+	cameraX, cameraZoom := w.CameraParams()
+
+	if w.GroundPainter != nil {
+		w.GroundPainter.Draw(screen, cameraX, cameraZoom, w.GroundY)
+	}
+
+	for _, actor := range actors {
+		rt := actor.GetRuntime()
+		if rt == nil {
+			continue
+		}
+
+		frame := rt.AnimPlayer.CurrentFrame()
+		if frame == nil {
+			continue
+		}
+
+		op := &ebiten.DrawImageOptions{}
+		if rt.Facing == -1 {
+			op.GeoM.Scale(-1, 1)
+			op.GeoM.Translate(float64(frame.Bounds().Dx()), 0)
+		}
+
+		op.GeoM.Scale(cameraZoom, cameraZoom)
+		drawX, drawY := w.Camera.WorldToScreen(frameDrawPosition(rt))
+		op.GeoM.Translate(drawX, drawY)
+		screen.DrawImage(frame, op)
+	}
+}
+
+func frameDrawPosition(rt *charactor.Runtime) (float64, float64) {
+	frame := rt.AnimPlayer.CurrentFrame()
+	if frame == nil {
+		return rt.Body.X, rt.Body.Y
+	}
+
+	meta := rt.AnimPlayer.CurrentFrameMeta()
+	originX := 0.0
+	originY := float64(frame.Bounds().Dy())
+	if meta != nil {
+		originX = meta.Origin.X
+		originY = meta.Origin.Y
+	}
+
+	drawX := rt.Body.X - originX
+	if rt.Facing == -1 {
+		drawX = rt.Body.X - (float64(frame.Bounds().Dx()) - originX)
+	}
+
+	return drawX, rt.Body.Y - originY
 }
